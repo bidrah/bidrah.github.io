@@ -1,9 +1,9 @@
-let sides = 5;  // Default number of sides
-let angle = 0;  // Rotation angle
+let sides = 5; // Default number of sides
+let angle = 0; // Rotation angle
+let rotationSpeed = 0.02; // Speed of rotation
+let polygonRadius = 100;
 let ball;
 let gravity = 0.2;
-let polygonRadius = 100;
-let rotationSpeed = 0.02;
 
 function setup() {
     createCanvas(400, 400);
@@ -12,16 +12,23 @@ function setup() {
 
 function draw() {
     background(220);
+    
+    // Move origin to center
     translate(width / 2, height / 2);
     
-    // Rotate and draw the polygon
+    // Rotate the entire scene
     rotate(angle);
+    
+    // Draw the polygon
     drawPolygon(0, 0, polygonRadius, sides);
     
-    // Ball physics and interaction
-    angle += rotationSpeed;
+    // Apply rotational acceleration to the ball
+    ball.applyRotation(angle, rotationSpeed);
     ball.update();
     ball.display();
+    
+    // Increase rotation angle
+    angle += rotationSpeed;
 }
 
 // Function to draw a polygon
@@ -38,25 +45,28 @@ function drawPolygon(x, y, radius, sides) {
 
 class Ball {
     constructor() {
-        this.pos = createVector(0, -polygonRadius / 2);
+        this.pos = createVector(0, -polygonRadius / 2); // Start near the top
         this.vel = createVector(0, 0);
+        this.acc = createVector(0, gravity);
+    }
+
+    applyRotation(angle, rotationSpeed) {
+        // Convert rotation into a force acting on the ball
+        let centrifugalForce = p5.Vector.fromAngle(angle + HALF_PI);
+        centrifugalForce.mult(rotationSpeed * 5); // Tune the effect
+        
+        // Apply force due to rotation
+        this.vel.add(centrifugalForce);
     }
 
     update() {
-        this.vel.y += gravity; // Apply gravity
+        this.vel.add(this.acc);
         this.pos.add(this.vel);
 
         // Collision with bottom
-        if (this.pos.y > polygonRadius / 2) {
-            this.pos.y = polygonRadius / 2;
-            this.vel.y *= -0.6; // Bounce with damping
-        }
-
-        // Keep the ball inside the polygon (crude boundary handling)
-        let distFromCenter = this.pos.mag();
-        if (distFromCenter > polygonRadius * 0.9) {
+        if (this.pos.mag() > polygonRadius * 0.9) {
             this.pos.setMag(polygonRadius * 0.9);
-            this.vel.mult(-0.6); // Reverse velocity on impact
+            this.vel.mult(-0.6); // Bounce back
         }
     }
 
