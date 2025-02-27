@@ -3,142 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TextMaster - Format Your Text</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            background-color: #f4f7fa;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-        }
-        .text-area {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        textarea {
-            width: 100%;
-            max-width: 580px;
-            height: 300px;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            resize: vertical;
-            background-color: #fff;
-        }
-        .controls {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .controls button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            background-color: #3498db;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .controls button:hover {
-            background-color: #2980b9;
-        }
-        #copyBtn {
-            background-color: #27ae60;
-        }
-        #copyBtn:hover {
-            background-color: #219653;
-        }
-        @media (max-width: 768px) {
-            .text-area {
-                flex-direction: column;
-            }
-            textarea {
-                max-width: 100%;
-            }
-        }
-    </style>
+    <title>Text Formatter</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>TextMaster</h1>
-        <div class="text-area">
-            <textarea id="inputText" placeholder="Enter your text here..."></textarea>
-            <textarea id="outputText" placeholder="Formatted text appears here..." readonly></textarea>
-        </div>
-        <div class="controls">
-            <button onclick="toUpperCase()">Uppercase</button>
-            <button onclick="toLowerCase()">Lowercase</button>
-            <button onclick="toTitleCase()">Title Case</button>
+        <h1>Text Formatter</h1>
+        <textarea id="text-input" placeholder="Enter your text here..."></textarea>
+
+        <div class="buttons">
+            <button onclick="convertText('uppercase')">UPPERCASE</button>
+            <button onclick="convertText('lowercase')">lowercase</button>
+            <button onclick="convertText('titlecase')">Title Case</button>
+            <button onclick="convertText('sentencecase')">Sentence case</button>
             <button onclick="trimSpaces()">Trim Spaces</button>
-            <button onclick="removeExtraLines()">Remove Extra Lines</button>
-            <button id="copyBtn" onclick="copyToClipboard()">Copy Output</button>
+            <button onclick="reverseText()">Reverse Text</button>
+            <button onclick="sortLines()">Sort A-Z</button>
+            <button onclick="copyText()">Copy</button>
+            <button onclick="downloadText()">Download</button>
         </div>
+
+        <div class="extra-tools">
+            <input type="text" id="find-text" placeholder="Find">
+            <input type="text" id="replace-text" placeholder="Replace with">
+            <button onclick="findAndReplace()">Replace</button>
+        </div>
+
+        <p id="word-count">Words: 0 | Characters: 0</p>
     </div>
 
-    <script>
-        const inputText = document.getElementById('inputText');
-        const outputText = document.getElementById('outputText');
-
-        // Update output in real-time as user types
-        inputText.addEventListener('input', () => {
-            outputText.value = inputText.value; // Default: mirror input
-        });
-
-        function toUpperCase() {
-            outputText.value = inputText.value.toUpperCase();
-        }
-
-        function toLowerCase() {
-            outputText.value = inputText.value.toLowerCase();
-        }
-
-        function toTitleCase() {
-            outputText.value = inputText.value
-                .toLowerCase()
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-        }
-
-        function trimSpaces() {
-            outputText.value = inputText.value
-                .replace(/\s+/g, ' ') // Collapse multiple spaces into one
-                .trim(); // Remove leading/trailing spaces
-        }
-
-        function removeExtraLines() {
-            outputText.value = inputText.value
-                .split('\n')
-                .filter(line => line.trim() !== '') // Remove empty lines
-                .join('\n');
-        }
-
-        function copyToClipboard() {
-            outputText.select();
-            document.execCommand('copy');
-            alert('Text copied to clipboard!');
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
