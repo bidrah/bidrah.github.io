@@ -3,215 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rotating Polygon with Bouncing Ball</title>
+    <title>TextMaster - Format Your Text</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            font-family: 'Segoe UI', sans-serif;
-            color: #fff;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
         }
         .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-        }
-        canvas {
-            border: 2px solid #ffffff33;
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        .controls {
-            margin-top: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
+            flex-direction: column;
             gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        label {
-            font-size: 1.1em;
-            margin-right: 10px;
-        }
-        input[type="number"], input[type="range"] {
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
-            background: #ffffffcc;
-            color: #333;
-            font-size: 1em;
-        }
-        input[type="range"] {
-            width: 150px;
         }
         h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: #2c3e50;
+        }
+        .text-area {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        textarea {
+            width: 100%;
+            max-width: 580px;
+            height: 300px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            background-color: #fff;
+        }
+        .controls {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .controls button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .controls button:hover {
+            background-color: #2980b9;
+        }
+        #copyBtn {
+            background-color: #27ae60;
+        }
+        #copyBtn:hover {
+            background-color: #219653;
+        }
+        @media (max-width: 768px) {
+            .text-area {
+                flex-direction: column;
+            }
+            textarea {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Rotating Polygon Playground</h1>
-        <canvas id="canvas" width="600" height="600"></canvas>
+        <h1>TextMaster</h1>
+        <div class="text-area">
+            <textarea id="inputText" placeholder="Enter your text here..."></textarea>
+            <textarea id="outputText" placeholder="Formatted text appears here..." readonly></textarea>
+        </div>
         <div class="controls">
-            <div>
-                <label for="sides">Number of Sides (3-12):</label>
-                <input type="number" id="sides" min="3" max="12" value="6">
-            </div>
-            <div>
-                <label for="speed">Rotation Speed:</label>
-                <input type="range" id="speed" min="0" max="5" value="1" step="0.1">
-            </div>
+            <button onclick="toUpperCase()">Uppercase</button>
+            <button onclick="toLowerCase()">Lowercase</button>
+            <button onclick="toTitleCase()">Title Case</button>
+            <button onclick="trimSpaces()">Trim Spaces</button>
+            <button onclick="removeExtraLines()">Remove Extra Lines</button>
+            <button id="copyBtn" onclick="copyToClipboard()">Copy Output</button>
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const sidesInput = document.getElementById('sides');
-        const speedInput = document.getElementById('speed');
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
 
-        let sides = parseInt(sidesInput.value);
-        let rotationSpeed = parseFloat(speedInput.value);
-        let angle = 0;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = 200;
-
-        // Ball properties
-        let ball = {
-            x: centerX,
-            y: centerY - 100,
-            radius: 15,
-            vx: 0,
-            vy: 0,
-            mass: 1
-        };
-        const gravity = 0.66;
-        const friction = 0.59;
-
-        function drawPolygon() {
-            ctx.beginPath();
-            for (let i = 0; i < sides; i++) {
-                const x = centerX + radius * Math.cos((2 * Math.PI * i / sides) + angle);
-                const y = centerY + radius * Math.sin((2 * Math.PI * i / sides) + angle);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.closePath();
-            ctx.strokeStyle = '#00ffcc';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.1)';
-            ctx.fill();
-        }
-
-        function getPolygonVertices() {
-            const vertices = [];
-            for (let i = 0; i < sides; i++) {
-                const x = centerX + radius * Math.cos((2 * Math.PI * i / sides) + angle);
-                const y = centerY + radius * Math.sin((2 * Math.PI * i / sides) + angle);
-                vertices.push({ x, y });
-            }
-            return vertices;
-        }
-
-        function drawBall() {
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
-            ctx.fillStyle = '#ff3366';
-            ctx.fill();
-            ctx.closePath();
-        }
-
-        function updateBall() {
-            // Apply gravity relative to canvas (downward)
-            ball.vy += gravity;
-
-            // Update position
-            ball.x += ball.vx;
-            ball.y += ball.vy;
-
-            // Apply friction
-            ball.vx *= friction;
-            ball.vy *= friction;
-
-            // Collision detection with polygon walls
-            const vertices = getPolygonVertices();
-            for (let i = 0; i < sides; i++) {
-                const v1 = vertices[i];
-                const v2 = vertices[(i + 1) % sides];
-                handleCollision(v1, v2);
-            }
-        }
-
-        function handleCollision(v1, v2) {
-            // Line segment from v1 to v2
-            const dx = v2.x - v1.x;
-            const dy = v2.y - v1.y;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            const nx = -dy / len; // Normal x (perpendicular to line)
-            const ny = dx / len;  // Normal y
-
-            // Distance from ball to line
-            const dist = (ball.x - v1.x) * nx + (ball.y - v1.y) * ny;
-            if (Math.abs(dist) < ball.radius) {
-                // Check if ball is within segment bounds
-                const t = ((ball.x - v1.x) * dx + (ball.y - v1.y) * dy) / (len * len);
-                if (t >= 0 && t <= 1) {
-                    // Reflect velocity
-                    const dot = ball.vx * nx + ball.vy * ny;
-                    ball.vx -= 2 * dot * nx;
-                    ball.vy -= 2 * dot * ny;
-
-                    // Push ball out of wall
-                    const penetration = ball.radius - Math.abs(dist);
-                    ball.x += nx * penetration;
-                    ball.y += ny * penetration;
-
-                    // Add some bounce effect
-                    ball.vx *= 0.8;
-                    ball.vy *= 0.8;
-                }
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Update rotation
-            angle += rotationSpeed * 0.02;
-
-            drawPolygon();
-            updateBall();
-            drawBall();
-
-            requestAnimationFrame(animate);
-        }
-
-        // Event listeners for inputs
-        sidesInput.addEventListener('input', () => {
-            const newSides = parseInt(sidesInput.value);
-            if (newSides >= 3 && newSides <= 12) sides = newSides;
-            sidesInput.value = sides;
+        // Update output in real-time as user types
+        inputText.addEventListener('input', () => {
+            outputText.value = inputText.value; // Default: mirror input
         });
 
-        speedInput.addEventListener('input', () => {
-            rotationSpeed = parseFloat(speedInput.value);
-        });
+        function toUpperCase() {
+            outputText.value = inputText.value.toUpperCase();
+        }
 
-        // Start animation
-        animate();
+        function toLowerCase() {
+            outputText.value = inputText.value.toLowerCase();
+        }
+
+        function toTitleCase() {
+            outputText.value = inputText.value
+                .toLowerCase()
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+
+        function trimSpaces() {
+            outputText.value = inputText.value
+                .replace(/\s+/g, ' ') // Collapse multiple spaces into one
+                .trim(); // Remove leading/trailing spaces
+        }
+
+        function removeExtraLines() {
+            outputText.value = inputText.value
+                .split('\n')
+                .filter(line => line.trim() !== '') // Remove empty lines
+                .join('\n');
+        }
+
+        function copyToClipboard() {
+            outputText.select();
+            document.execCommand('copy');
+            alert('Text copied to clipboard!');
+        }
     </script>
 </body>
 </html>
