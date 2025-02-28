@@ -23,7 +23,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 20px 50px;
+            padding: 15px 25px;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             display: flex;
@@ -33,7 +33,7 @@
         }
 
         header .logo {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: #333;
         }
@@ -44,7 +44,7 @@
         }
 
         header nav ul li {
-            margin-left: 30px;
+            margin-left: 20px;
         }
 
         header nav ul li a {
@@ -70,22 +70,23 @@
             background: linear-gradient(135deg, #fff, #e6f0fa);
             position: relative;
             overflow: hidden;
+            padding: 20px;
         }
 
         .hero h1 {
-            font-size: 60px;
+            font-size: 48px;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .hero p {
-            font-size: 20px;
+            font-size: 18px;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .hero .cta {
-            padding: 15px 40px;
+            padding: 12px 30px;
             background: #87ceeb;
             color: #fff;
             text-decoration: none;
@@ -99,14 +100,14 @@
 
         /* Content Section */
         .content {
-            padding: 50px;
+            padding: 40px 20px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .section-title {
-            font-size: 32px;
-            margin-bottom: 30px;
+            font-size: 28px;
+            margin-bottom: 25px;
             text-align: center;
             color: #333;
         }
@@ -119,7 +120,7 @@
 
         .card {
             background: #fff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s, box-shadow 0.3s;
@@ -135,30 +136,38 @@
             height: 200px;
             border: none;
             border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .card h3 {
-            font-size: 18px;
-            color: #333;
             margin-bottom: 10px;
         }
 
+        .card h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
         .card p {
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
+        }
+
+        .placeholder-img {
+            width: 100%;
+            height: 150px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
         /* Footer */
         footer {
-            padding: 20px;
+            padding: 15px;
             background: #e6e6e6;
             text-align: center;
             color: #666;
         }
 
         footer .social-icons a {
-            margin: 0 10px;
+            margin: 0 8px;
             color: #666;
             text-decoration: none;
             transition: color 0.3s;
@@ -166,6 +175,108 @@
 
         footer .social-icons a:hover {
             color: #87ceeb;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            /* Header */
+            header {
+                padding: 10px 15px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            header .logo {
+                font-size: 18px;
+            }
+
+            header nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            header nav ul li {
+                margin: 8px 0;
+                text-align: center;
+            }
+
+            /* Hero Section */
+            .hero {
+                height: 70vh;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .hero .cta {
+                padding: 10px 25px;
+                font-size: 14px;
+            }
+
+            /* Content Section */
+            .content {
+                padding: 20px 10px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr; /* Single column for mobile */
+                gap: 15px;
+            }
+
+            .card iframe {
+                height: 180px; /* Slightly smaller for mobile */
+            }
+
+            .card h3 {
+                font-size: 15px;
+            }
+
+            .card p {
+                font-size: 12px;
+            }
+
+            .placeholder-img {
+                height: 120px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            footer .social-icons a {
+                margin: 0 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .card iframe {
+                height: 160px;
+            }
         }
     </style>
 </head>
@@ -230,50 +341,42 @@
 
     <!-- JavaScript to Load and Embed YouTube Videos -->
     <script>
-        // Function to extract YouTube video ID from URL
         function getYouTubeId(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        // Fetch and parse CSV file
         fetch('links.csv')
             .then(response => response.text())
             .then(data => {
-                const rows = data.split('\n').slice(1); // Skip header row
+                const rows = data.split('\n').slice(1);
                 const vlogGrid = document.getElementById('vlog-grid');
 
                 rows.forEach(row => {
-                    if (row.trim() === '') return; // Skip empty rows
+                    if (row.trim() === '') return;
                     const [url, title, description] = row.split(',');
 
                     const videoId = getYouTubeId(url);
-                    if (!videoId) return; // Skip invalid URLs
+                    if (!videoId) return;
 
-                    // Create card element
                     const card = document.createElement('div');
                     card.className = 'card';
 
-                    // Embed YouTube iframe
                     const iframe = document.createElement('iframe');
                     iframe.src = `https://www.youtube.com/embed/${videoId}`;
                     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                     iframe.allowFullscreen = true;
 
-                    // Add title and description
                     const titleEl = document.createElement('h3');
                     titleEl.textContent = title || 'Untitled Video';
 
                     const descEl = document.createElement('p');
                     descEl.textContent = description || 'No description available';
 
-                    // Append elements to card
                     card.appendChild(iframe);
                     card.appendChild(titleEl);
                     card.appendChild(descEl);
-
-                    // Append card to grid
                     vlogGrid.appendChild(card);
                 });
             })
