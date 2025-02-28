@@ -3,35 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Formatter</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Bidrah - Futuristic Homepage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        header nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        header nav ul li {
+            margin-left: 30px;
+        }
+
+        header nav ul li a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        header nav ul li a:hover {
+            color: #87ceeb;
+            border-bottom: 2px solid #87ceeb;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #fff, #e6f0fa);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .hero .cta {
+            padding: 15px 40px;
+            background: #87ceeb;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: box-shadow 0.3s;
+        }
+
+        .hero .cta:hover {
+            box-shadow: 0 0 15px rgba(135, 206, 235, 0.7);
+        }
+
+        /* Content Section */
+        .content {
+            padding: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(135, 206, 235, 0.3);
+        }
+
+        .card .placeholder-img {
+            width: 100%;
+            height: 150px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            padding: 20px;
+            background: #e6e6e6;
+            text-align: center;
+            color: #666;
+        }
+
+        footer .social-icons a {
+            margin: 0 10px;
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer .social-icons a:hover {
+            color: #87ceeb;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Text Formatter</h1>
-        <textarea id="text-input" placeholder="Enter your text here..."></textarea>
+    <!-- Header -->
+    <header>
+        <div class="logo">Bidrah</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Vlog</a></li>
+                <li><a href="#">Tools</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <div class="buttons">
-            <button onclick="convertText('uppercase')">UPPERCASE</button>
-            <button onclick="convertText('lowercase')">lowercase</button>
-            <button onclick="convertText('titlecase')">Title Case</button>
-            <button onclick="convertText('sentencecase')">Sentence case</button>
-            <button onclick="trimSpaces()">Trim Spaces</button>
-            <button onclick="reverseText()">Reverse Text</button>
-            <button onclick="sortLines()">Sort A-Z</button>
-            <button onclick="copyText()">Copy</button>
-            <button onclick="downloadText()">Download</button>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Bidrah</h1>
+        <p>Your hub for cutting-edge tech vlogs & tools</p>
+        <a href="#" class="cta">Explore Now</a>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content">
+        <h2 class="section-title">Latest Vlog Posts</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="placeholder-img"></div>
+                <h3>Vlog Post Title 1</h3>
+                <p>Short description placeholder...</p>
+            </div>
+            <div class="card">
+                <div class="placeholder-img"></div>
+                <h3>Vlog Post Title 2</h3>
+                <p>Short description placeholder...</p>
+            </div>
+            <div class="card">
+                <div class="placeholder-img"></div>
+                <h3>Vlog Post Title 3</h3>
+                <p>Short description placeholder...</p>
+            </div>
         </div>
 
-        <div class="extra-tools">
-            <input type="text" id="find-text" placeholder="Find">
-            <input type="text" id="replace-text" placeholder="Replace with">
-            <button onclick="findAndReplace()">Replace</button>
+        <h2 class="section-title">Featured Tools</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="placeholder-img"></div>
+                <h3>Tool Name 1</h3>
+                <p>Brief tool description...</p>
+            </div>
+            <div class="card">
+                <div class="placeholder-img"></div>
+                <h3>Tool Name 2</h3>
+                <p>Brief tool description...</p>
+            </div>
+            <div class="card">
+                <div class="placeholder-img"></div>
+                <h3>Tool Name 3</h3>
+                <p>Brief tool description...</p>
+            </div>
         </div>
+    </section>
 
-        <p id="word-count">Words: 0 | Characters: 0</p>
-    </div>
-
-    <script src="script.js"></script>
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Bidrah. All rights reserved.</p>
+        <div class="social-icons">
+            <a href="#">Twitter</a>
+            <a href="#">YouTube</a>
+            <a href="#">GitHub</a>
+        </div>
+    </footer>
 </body>
 </html>
