@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #f0f2f5; /* Facebook light gray background */
             margin: 0;
             padding: 20px;
         }
@@ -30,25 +30,38 @@
         }
         .buttons {
             margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
         button {
             padding: 8px 15px;
-            margin: 0 5px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
+            color: #606770; /* Facebook gray text */
+            background-color: #e4e6eb; /* Light gray button */
+            transition: background-color 0.2s, color 0.2s;
         }
-        .like-btn {
-            background-color: #4CAF50;
+        .like-btn.active {
+            background-color: #1877F2; /* Facebook blue */
             color: white;
         }
-        .dislike-btn {
-            background-color: #f44336;
+        .dislike-btn.active {
+            background-color: #606770; /* Darker gray */
             color: white;
         }
         button:hover {
+            background-color: #d8dadf; /* Slightly darker gray on hover */
+        }
+        .like-btn.active:hover, .dislike-btn.active:hover {
             opacity: 0.9;
+        }
+        .counter {
+            font-size: 12px;
+            color: #606770;
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -57,102 +70,146 @@
         <!-- Image 1 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=1" alt="AI Generated Image 1">
-            <p>Prompt: A futuristic city at sunset</p>
+            <!-- Prompt: A futuristic city at sunset -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 1)">Like<span class="counter" id="like-1">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 1)">Dislike<span class="counter" id="dislike-1">0</span></button>
             </div>
         </div>
 
         <!-- Image 2 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=2" alt="AI Generated Image 2">
-            <p>Prompt: A mystical forest with glowing mushrooms</p>
+            <!-- Prompt: A mystical forest with glowing mushrooms -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 2)">Like<span class="counter" id="like-2">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 2)">Dislike<span class="counter" id="dislike-2">0</span></button>
             </div>
         </div>
 
         <!-- Image 3 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=3" alt="AI Generated Image 3">
-            <p>Prompt: A steampunk airship in the clouds</p>
+            <!-- Prompt: A steampunk airship in the clouds -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 3)">Like<span class="counter" id="like-3">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 3)">Dislike<span class="counter" id="dislike-3">0</span></button>
             </div>
         </div>
 
         <!-- Image 4 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=4" alt="AI Generated Image 4">
-            <p>Prompt: A cyberpunk cat with neon eyes</p>
+            <!-- Prompt: A cyberpunk cat with neon eyes -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 4)">Like<span class="counter" id="like-4">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 4)">Dislike<span class="counter" id="dislike-4">0</span></button>
             </div>
         </div>
 
         <!-- Image 5 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=5" alt="AI Generated Image 5">
-            <p>Prompt: An underwater castle with merpeople</p>
+            <!-- Prompt: An underwater castle with merpeople -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 5)">Like<span class="counter" id="like-5">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 5)">Dislike<span class="counter" id="dislike-5">0</span></button>
             </div>
         </div>
 
         <!-- Image 6 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=6" alt="AI Generated Image 6">
-            <p>Prompt: A desert caravan with alien creatures</p>
+            <!-- Prompt: A desert caravan with alien creatures -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 6)">Like<span class="counter" id="like-6">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 6)">Dislike<span class="counter" id="dislike-6">0</span></button>
             </div>
         </div>
 
         <!-- Image 7 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=7" alt="AI Generated Image 7">
-            <p>Prompt: A snowy mountain with a dragon flying above</p>
+            <!-- Prompt: A snowy mountain with a dragon flying above -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 7)">Like<span class="counter" id="like-7">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 7)">Dislike<span class="counter" id="dislike-7">0</span></button>
             </div>
         </div>
 
         <!-- Image 8 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=8" alt="AI Generated Image 8">
-            <p>Prompt: A retro robot in a diner</p>
+            <!-- Prompt: A retro robot in a diner -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 8)">Like<span class="counter" id="like-8">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 8)">Dislike<span class="counter" id="dislike-8">0</span></button>
             </div>
         </div>
 
         <!-- Image 9 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=9" alt="AI Generated Image 9">
-            <p>Prompt: A floating island with waterfalls</p>
+            <!-- Prompt: A floating island with waterfalls -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 9)">Like<span class="counter" id="like-9">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 9)">Dislike<span class="counter" id="dislike-9">0</span></button>
             </div>
         </div>
 
         <!-- Image 10 -->
         <div class="image-card">
             <img src="https://picsum.photos/600/400?random=10" alt="AI Generated Image 10">
-            <p>Prompt: A psychedelic dreamscape with colorful swirls</p>
+            <!-- Prompt: A psychedelic dreamscape with colorful swirls -->
             <div class="buttons">
-                <button class="like-btn">Like</button>
-                <button class="dislike-btn">Dislike</button>
+                <button class="like-btn" onclick="toggleLike(this, 10)">Like<span class="counter" id="like-10">0</span></button>
+                <button class="dislike-btn" onclick="toggleDislike(this, 10)">Dislike<span class="counter" id="dislike-10">0</span></button>
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleLike(button, id) {
+            const counter = document.getElementById(`like-${id}`);
+            let count = parseInt(counter.textContent);
+            const isActive = button.classList.contains('active');
+
+            if (isActive) {
+                button.classList.remove('active');
+                counter.textContent = count - 1;
+            } else {
+                button.classList.add('active');
+                counter.textContent = count + 1;
+                // Remove dislike if active
+                const dislikeBtn = button.parentElement.querySelector('.dislike-btn');
+                if (dislikeBtn.classList.contains('active')) {
+                    dislikeBtn.classList.remove('active');
+                    const dislikeCounter = document.getElementById(`dislike-${id}`);
+                    dislikeCounter.textContent = parseInt(dislikeCounter.textContent) - 1;
+                }
+            }
+        }
+
+        function toggleDislike(button, id) {
+            const counter = document.getElementById(`dislike-${id}`);
+            let count = parseInt(counter.textContent);
+            const isActive = button.classList.contains('active');
+
+            if (isActive) {
+                button.classList.remove('active');
+                counter.textContent = count - 1;
+            } else {
+                button.classList.add('active');
+                counter.textContent = count + 1;
+                // Remove like if active
+                const likeBtn = button.parentElement.querySelector('.like-btn');
+                if (likeBtn.classList.contains('active')) {
+                    likeBtn.classList.remove('active');
+                    const likeCounter = document.getElementById(`like-${id}`);
+                    likeCounter.textContent = parseInt(likeCounter.textContent) - 1;
+                }
+            }
+        }
+    </script>
 </body>
 </html>
