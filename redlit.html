@@ -9,8 +9,12 @@
 <body>
     <div class="container">
         <div class="input-container">
-            <input type="text" id="subredditInput" placeholder="Enter subreddit (e.g., pics)">
-            <button onclick="loadSubreddit()">Load</button>
+            <div class="mode-select">
+                <label><input type="radio" name="mode" value="subreddit" checked> Subreddit</label>
+                <label><input type="radio" name="mode" value="search"> Search</label>
+            </div>
+            <input type="text" id="inputField" placeholder="Enter subreddit (e.g., pics) or search term">
+            <button onclick="loadContent()">Load</button>
         </div>
         <div id="feed" class="feed"></div>
     </div>
