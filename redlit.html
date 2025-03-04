@@ -3,161 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reddit Media Viewer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .input-section {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        input {
-            padding: 10px;
-            font-size: 16px;
-            flex: 1;
-            max-width: 300px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #ff4500;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        button:hover {
-            background-color: #ff5722;
-        }
-
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .media-item {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .media-item img, .media-item video {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .error {
-            color: red;
-            margin-top: 10px;
-        }
-    </style>
+    <title>Reddit TikTok Viewer</title>
+    <link rel="stylesheet" href="rstyles.css">
 </head>
 <body>
     <div class="container">
-        <div class="input-section">
-            <input type="text" id="subredditInput" placeholder="Enter subreddit name...">
-            <button onclick="loadMedia()">Load Media</button>
+        <div class="input-container">
+            <input type="text" id="subredditInput" placeholder="Enter subreddit (e.g., pics)">
+            <button onclick="loadSubreddit()">Load</button>
         </div>
-        <div id="errorMessage" class="error"></div>
-        <div id="mediaContainer" class="media-grid"></div>
+        <div id="feed" class="feed"></div>
     </div>
-
-    <script>
-        async function loadMedia() {
-            const subreddit = document.getElementById('subredditInput').value.trim();
-            const mediaContainer = document.getElementById('mediaContainer');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            if (!subreddit) {
-                errorMessage.textContent = 'Please enter a subreddit name';
-                return;
-            }
-
-            mediaContainer.innerHTML = ''; // Clear previous content
-            errorMessage.textContent = ''; // Clear previous errors
-
-            try {
-                const response = await fetch(`https://www.reddit.com/r/${subreddit}/top.json?limit=30&t=week`);
-                if (!response.ok) throw new Error('Subreddit not found or unable to fetch');
-                
-                const data = await response.json();
-                const posts = data.data.children;
-
-                if (posts.length === 0) {
-                    errorMessage.textContent = 'No posts found in this subreddit';
-                    return;
-                }
-
-                posts.forEach(post => {
-                    if (!post.data.url) return;
-
-                    const mediaItem = createMediaElement(post.data);
-                    if (mediaItem) {
-                        mediaContainer.appendChild(mediaItem);
-                    }
-                });
-
-            } catch (error) {
-                errorMessage.textContent = error.message;
-            }
-        }
-
-        function createMediaElement(postData) {
-            const container = document.createElement('div');
-            container.className = 'media-item';
-
-            try {
-                // Handle different media types
-                if (postData.is_video) {
-                    const video = document.createElement('video');
-                    video.controls = true;
-                    video.muted = true;
-                    video.innerHTML = `
-                        <source src="${postData.media.reddit_video.fallback_url}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    `;
-                    container.appendChild(video);
-                } else if (postData.post_hint === 'image' || 
-                         postData.url.match(/\.(jpg|jpeg|png|gif)$/i)) {
-                    const img = document.createElement('img');
-                    img.src = postData.url;
-                    img.alt = postData.title;
-                    container.appendChild(img);
-                } else if (postData.media?.type === 'gallery') {
-                    // Handle Reddit galleries
-                    postData.gallery_data.items.forEach(item => {
-                        const mediaId = item.media_id;
-                        const galleryImage = document.createElement('img');
-                        galleryImage.src = `https://i.redd.it/${mediaId}.jpg`;
-                        galleryImage.alt = postData.title;
-                        container.appendChild(galleryImage);
-                    });
-                } else {
-                    return null;
-                }
-
-                return container;
-            } catch (error) {
-                console.error('Error creating media element:', error);
-                return null;
-            }
-        }
-    </script>
+    <script src="rscript.js"></script>
 </body>
 </html>
