@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f2f5; /* Facebook light gray background */
+            background-color: #f0f2f5;
             margin: 0;
             padding: 20px;
         }
@@ -40,20 +40,20 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            color: #606770; /* Facebook gray text */
-            background-color: #e4e6eb; /* Light gray button */
+            color: #606770;
+            background-color: #e4e6eb;
             transition: background-color 0.2s, color 0.2s;
         }
         .like-btn.active {
-            background-color: #1877F2; /* Facebook blue */
+            background-color: #1877F2;
             color: white;
         }
         .dislike-btn.active {
-            background-color: #606770; /* Darker gray */
+            background-color: #606770;
             color: white;
         }
         button:hover {
-            background-color: #d8dadf; /* Slightly darker gray on hover */
+            background-color: #d8dadf;
         }
         .like-btn.active:hover, .dislike-btn.active:hover {
             opacity: 0.9;
@@ -62,6 +62,35 @@
             font-size: 12px;
             color: #606770;
             margin-left: 5px;
+        }
+        .comment-section {
+            margin-top: 15px;
+            text-align: left;
+        }
+        .comment-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccd0d5;
+            border-radius: 20px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            background-color: #f0f2f5;
+            outline: none;
+        }
+        .comment-input:focus {
+            border-color: #1877F2;
+        }
+        .comment-list {
+            margin-top: 10px;
+        }
+        .comment {
+            background-color: #f0f2f5;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #050505;
         }
     </style>
 </head>
@@ -75,6 +104,10 @@
                 <button class="like-btn" onclick="toggleLike(this, 1)">Like<span class="counter" id="like-1">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 1)">Dislike<span class="counter" id="dislike-1">0</span></button>
             </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-1" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(1)">
+                <div class="comment-list" id="comment-list-1"></div>
+            </div>
         </div>
 
         <!-- Image 2 -->
@@ -84,6 +117,10 @@
             <div class="buttons">
                 <button class="like-btn" onclick="toggleLike(this, 2)">Like<span class="counter" id="like-2">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 2)">Dislike<span class="counter" id="dislike-2">0</span></button>
+            </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-2" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(2)">
+                <div class="comment-list" id="comment-list-2"></div>
             </div>
         </div>
 
@@ -95,6 +132,10 @@
                 <button class="like-btn" onclick="toggleLike(this, 3)">Like<span class="counter" id="like-3">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 3)">Dislike<span class="counter" id="dislike-3">0</span></button>
             </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-3" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(3)">
+                <div class="comment-list" id="comment-list-3"></div>
+            </div>
         </div>
 
         <!-- Image 4 -->
@@ -104,6 +145,10 @@
             <div class="buttons">
                 <button class="like-btn" onclick="toggleLike(this, 4)">Like<span class="counter" id="like-4">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 4)">Dislike<span class="counter" id="dislike-4">0</span></button>
+            </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-4" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(4)">
+                <div class="comment-list" id="comment-list-4"></div>
             </div>
         </div>
 
@@ -115,6 +160,10 @@
                 <button class="like-btn" onclick="toggleLike(this, 5)">Like<span class="counter" id="like-5">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 5)">Dislike<span class="counter" id="dislike-5">0</span></button>
             </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-5" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(5)">
+                <div class="comment-list" id="comment-list-5"></div>
+            </div>
         </div>
 
         <!-- Image 6 -->
@@ -124,6 +173,10 @@
             <div class="buttons">
                 <button class="like-btn" onclick="toggleLike(this, 6)">Like<span class="counter" id="like-6">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 6)">Dislike<span class="counter" id="dislike-6">0</span></button>
+            </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-6" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(6)">
+                <div class="comment-list" id="comment-list-6"></div>
             </div>
         </div>
 
@@ -135,6 +188,10 @@
                 <button class="like-btn" onclick="toggleLike(this, 7)">Like<span class="counter" id="like-7">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 7)">Dislike<span class="counter" id="dislike-7">0</span></button>
             </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-7" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(7)">
+                <div class="comment-list" id="comment-list-7"></div>
+            </div>
         </div>
 
         <!-- Image 8 -->
@@ -144,6 +201,10 @@
             <div class="buttons">
                 <button class="like-btn" onclick="toggleLike(this, 8)">Like<span class="counter" id="like-8">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 8)">Dislike<span class="counter" id="dislike-8">0</span></button>
+            </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-8" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(8)">
+                <div class="comment-list" id="comment-list-8"></div>
             </div>
         </div>
 
@@ -155,6 +216,10 @@
                 <button class="like-btn" onclick="toggleLike(this, 9)">Like<span class="counter" id="like-9">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 9)">Dislike<span class="counter" id="dislike-9">0</span></button>
             </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-9" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(9)">
+                <div class="comment-list" id="comment-list-9"></div>
+            </div>
         </div>
 
         <!-- Image 10 -->
@@ -164,6 +229,10 @@
             <div class="buttons">
                 <button class="like-btn" onclick="toggleLike(this, 10)">Like<span class="counter" id="like-10">0</span></button>
                 <button class="dislike-btn" onclick="toggleDislike(this, 10)">Dislike<span class="counter" id="dislike-10">0</span></button>
+            </div>
+            <div class="comment-section">
+                <input type="text" class="comment-input" id="comment-input-10" placeholder="Write a comment..." onkeydown="if(event.key === 'Enter') addComment(10)">
+                <div class="comment-list" id="comment-list-10"></div>
             </div>
         </div>
     </div>
@@ -180,7 +249,6 @@
             } else {
                 button.classList.add('active');
                 counter.textContent = count + 1;
-                // Remove dislike if active
                 const dislikeBtn = button.parentElement.querySelector('.dislike-btn');
                 if (dislikeBtn.classList.contains('active')) {
                     dislikeBtn.classList.remove('active');
@@ -201,7 +269,6 @@
             } else {
                 button.classList.add('active');
                 counter.textContent = count + 1;
-                // Remove like if active
                 const likeBtn = button.parentElement.querySelector('.like-btn');
                 if (likeBtn.classList.contains('active')) {
                     likeBtn.classList.remove('active');
@@ -209,6 +276,20 @@
                     likeCounter.textContent = parseInt(likeCounter.textContent) - 1;
                 }
             }
+        }
+
+        function addComment(id) {
+            const input = document.getElementById(`comment-input-${id}`);
+            const commentText = input.value.trim();
+            if (commentText === '') return;
+
+            const commentList = document.getElementById(`comment-list-${id}`);
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment';
+            commentDiv.textContent = commentText;
+            commentList.appendChild(commentDiv);
+
+            input.value = ''; // Clear input after posting
         }
     </script>
 </body>
