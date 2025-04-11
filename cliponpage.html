@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clipon Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    #cliponText {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      word-break: break-word;
+      text-align: center;
+    }
+
+    button {
+      background-color: #1f1f1f;
+      color: #ffffff;
+      border: 1px solid #444;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="cliponText">Loading...</div>
+  <button onclick="copyClipon()">Copy</button>
+
+  <script>
+    const textContainer = document.getElementById("cliponText");
+
+    fetch("https://script.google.com/macros/s/AKfycbzCHeqkMx3RtDUs4PP0HcAeSOjOXTdrgFa7kc4imK_RqeWnD9-aWZsLVUkK1AbcKg4T/exec")
+      .then(response => response.json())
+      .then(data => {
+        textContainer.textContent = data.clipon || "No data found.";
+      })
+      .catch(error => {
+        textContainer.textContent = "Failed to load.";
+        console.error(error);
+      });
+
+    function copyClipon() {
+      const text = textContainer.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+      }, () => {
+        alert("Copy failed.");
+      });
+    }
+  </script>
+</body>
+</html>
