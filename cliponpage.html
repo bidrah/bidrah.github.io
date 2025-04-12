@@ -2,70 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clipon Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clipon Sync</title>
   <style>
     body {
-      margin: 0;
       font-family: sans-serif;
-      background-color: #121212;
-      color: #e0e0e0;
+      background: #e0f7f7;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      padding: 20px;
-      text-align: center;
+      padding: 2rem;
     }
-
-    #cliponText {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      word-break: break-word;
+    textarea {
+      width: 90%;
+      max-width: 600px;
+      height: 150px;
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      resize: vertical;
     }
-
     button {
-      background-color: #1f1f1f;
-      color: #ffffff;
-      border: 1px solid #444;
-      padding: 10px 20px;
-      border-radius: 6px;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: #009688;
+      color: white;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.2s;
     }
-
-    button:hover {
-      background-color: #333;
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <div id="cliponText">Loading...</div>
-  <button onclick="copyClipon()">Copy</button>
+  <h1>Clipon Sync</h1>
+  <textarea id="cliponBox" placeholder="Loading..."></textarea>
+  <button id="saveBtn">Save to Sheet</button>
+  <div class="status" id="status"></div>
 
   <script>
-    const textContainer = document.getElementById("cliponText");
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz1naZENaigQRS__6Hjqj1X2VvB1ELTglgWrIoXRdrU2p5MTS4huQueH9JmdUJCcCbglQ/exec';
+    const cliponBox = document.getElementById('cliponBox');
+    const saveBtn = document.getElementById('saveBtn');
+    const statusDiv = document.getElementById('status');
 
-    fetch("https://script.google.com/macros/s/AKfycbzCHeqkMx3RtDUs4PP0HcAeSOjOXTdrgFa7kc4imK_RqeWnD9-aWZsLVUkK1AbcKg4T/exec")
-      .then(response => response.json())
-      .then(data => {
-        const cliponValue = data[0]?.clipon;
-        textContainer.textContent = cliponValue ? cliponValue : "No data found.";
-      })
-      .catch(error => {
-        textContainer.textContent = "Failed to load.";
-        console.error(error);
-      });
-
-    function copyClipon() {
-      const text = textContainer.textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        alert("Copied to clipboard!");
-      }, () => {
-        alert("Copy failed.");
-      });
+    async function loadClipon() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        if (data.length > 0 && data[0].clipon !== undefined) {
+          cliponBox.value = data[0].clipon;
+        } else {
+          cliponBox.placeholder = 'clipon field not found.';
+        }
+      } catch (err) {
+        cliponBox.placeholder = 'Error loading data.';
+        console.error(err);
+      }
     }
+
+    async function saveClipon() {
+      saveBtn.disabled = true;
+      statusDiv.textContent = 'Saving...';
+
+      const postData = {
+        clipon: cliponBox.value
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify(postData),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const result = await res.json();
+        statusDiv.textContent = 'Saved successfully!';
+      } catch (err) {
+        statusDiv.textContent = 'Error saving data.';
+        console.error(err);
+      }
+
+      saveBtn.disabled = false;
+    }
+
+    saveBtn.addEventListener('click', saveClipon);
+
+    // Load initial value
+    loadClipon();
   </script>
 </body>
 </html>
