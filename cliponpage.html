@@ -22,9 +22,15 @@
       border-radius: 10px;
       border: 1px solid #ccc;
       resize: vertical;
+      background-color: #f0f0f0;
+    }
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
     }
     button {
-      margin-top: 1rem;
       padding: 0.75rem 1.5rem;
       font-size: 1rem;
       background-color: #009688;
@@ -45,13 +51,21 @@
 </head>
 <body>
   <h1>Clipon Sync</h1>
-  <textarea id="cliponBox" placeholder="Loading..."></textarea>
-  <button id="saveBtn">Save to Sheet</button>
+  <textarea id="cliponBox" disabled placeholder="Loading..."></textarea>
+
+  <div class="button-group">
+    <button id="editBtn">Edit</button>
+    <button id="copyBtn">Copy</button>
+    <button id="saveBtn" disabled>Save</button>
+  </div>
+
   <div class="status" id="status"></div>
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbz1naZENaigQRS__6Hjqj1X2VvB1ELTglgWrIoXRdrU2p5MTS4huQueH9JmdUJCcCbglQ/exec';
     const cliponBox = document.getElementById('cliponBox');
+    const editBtn = document.getElementById('editBtn');
+    const copyBtn = document.getElementById('copyBtn');
     const saveBtn = document.getElementById('saveBtn');
     const statusDiv = document.getElementById('status');
 
@@ -67,6 +81,21 @@
       } catch (err) {
         cliponBox.placeholder = 'Error loading data.';
         console.error(err);
+      }
+    }
+
+    function enableEdit() {
+      cliponBox.disabled = false;
+      cliponBox.focus();
+      saveBtn.disabled = false;
+    }
+
+    async function copyText() {
+      try {
+        await navigator.clipboard.writeText(cliponBox.value);
+        statusDiv.textContent = 'Copied to clipboard!';
+      } catch (err) {
+        statusDiv.textContent = 'Failed to copy.';
       }
     }
 
@@ -88,18 +117,23 @@
         });
 
         const result = await res.json();
-        statusDiv.textContent = 'Saved successfully!';
+        if (result.status === 'success') {
+          statusDiv.textContent = 'Saved successfully!';
+        } else {
+          statusDiv.textContent = 'Failed: ' + (result.message || 'Unknown error');
+        }
       } catch (err) {
         statusDiv.textContent = 'Error saving data.';
         console.error(err);
       }
 
-      saveBtn.disabled = false;
+      cliponBox.disabled = true;
     }
 
+    editBtn.addEventListener('click', enableEdit);
+    copyBtn.addEventListener('click', copyText);
     saveBtn.addEventListener('click', saveClipon);
 
-    // Load initial value
     loadClipon();
   </script>
 </body>
