@@ -1,140 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Clipon Sync</title>
+  <meta charset="UTF-8">
+  <title>ClipOn Cloud Saver</title>
   <style>
     body {
       font-family: sans-serif;
-      background: #e0f7f7;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      background: #eef6f7;
       padding: 2rem;
+      max-width: 600px;
+      margin: auto;
     }
     textarea {
-      width: 90%;
-      max-width: 600px;
-      height: 150px;
+      width: 100%;
+      height: 100px;
       font-size: 1rem;
-      padding: 1rem;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      resize: vertical;
-      background-color: #f0f0f0;
-    }
-    .button-group {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
+      padding: 0.5rem;
     }
     button {
-      padding: 0.75rem 1.5rem;
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
       font-size: 1rem;
-      background-color: #009688;
+    }
+    #savedSection {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: white;
+      border: 1px solid #ccc;
+      position: relative;
+    }
+    #copyBtn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #007BFF;
       color: white;
       border: none;
-      border-radius: 8px;
+      padding: 0.4rem 0.7rem;
+      border-radius: 5px;
       cursor: pointer;
-    }
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    .status {
-      margin-top: 1rem;
-      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <h1>Clipon Sync</h1>
-  <textarea id="cliponBox" disabled placeholder="Loading..."></textarea>
 
-  <div class="button-group">
-    <button id="editBtn">Edit</button>
-    <button id="copyBtn">Copy</button>
-    <button id="saveBtn" disabled>Save</button>
+  <h2>Save to ClipOn (Google Sheet)</h2>
+
+  <textarea id="clipInput" placeholder="Enter your text..."></textarea>
+  <br>
+  <button onclick="saveToSheet()">Save</button>
+
+  <div id="savedSection" style="display:none;">
+    <button id="copyBtn" onclick="copyClip()">Copy</button>
+    <strong>Latest Clip:</strong>
+    <p id="clipText">Loading...</p>
   </div>
 
-  <div class="status" id="status"></div>
-
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz1naZENaigQRS__6Hjqj1X2VvB1ELTglgWrIoXRdrU2p5MTS4huQueH9JmdUJCcCbglQ/exec';
-    const cliponBox = document.getElementById('cliponBox');
-    const editBtn = document.getElementById('editBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const statusDiv = document.getElementById('status');
+    const SHEET_URL = 'YOUR_WEB_APP_URL'; // <-- Paste your deployed web app URL here
 
-    async function loadClipon() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        if (data.length > 0 && data[0].clipon !== undefined) {
-          cliponBox.value = data[0].clipon;
-        } else {
-          cliponBox.placeholder = 'clipon field not found.';
-        }
-      } catch (err) {
-        cliponBox.placeholder = 'Error loading data.';
-        console.error(err);
-      }
+    function saveToSheet() {
+      const clipText = document.getElementById('clipInput').value.trim();
+      if (!clipText) return;
+
+      fetch(SHEET_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ clipon: clipText })
+      })
+      .then(res => res.text())
+      .then(msg => {
+        console.log("Server response:", msg);
+        document.getElementById('clipInput').value = "";
+        loadClip(); // refresh display
+      });
     }
 
-    function enableEdit() {
-      cliponBox.disabled = false;
-      cliponBox.focus();
-      saveBtn.disabled = false;
-    }
-
-    async function copyText() {
-      try {
-        await navigator.clipboard.writeText(cliponBox.value);
-        statusDiv.textContent = 'Copied to clipboard!';
-      } catch (err) {
-        statusDiv.textContent = 'Failed to copy.';
-      }
-    }
-
-    async function saveClipon() {
-      saveBtn.disabled = true;
-      statusDiv.textContent = 'Saving...';
-
-      const postData = {
-        clipon: cliponBox.value
-      };
-
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify(postData),
-          headers: {
-            'Content-Type': 'application/json'
+    function loadClip() {
+      fetch(SHEET_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (data.clipon) {
+            document.getElementById('clipText').innerText = data.clipon;
+            document.getElementById('savedSection').style.display = 'block';
           }
         });
-
-        const result = await res.json();
-        if (result.status === 'success') {
-          statusDiv.textContent = 'Saved successfully!';
-        } else {
-          statusDiv.textContent = 'Failed: ' + (result.message || 'Unknown error');
-        }
-      } catch (err) {
-        statusDiv.textContent = 'Error saving data.';
-        console.error(err);
-      }
-
-      cliponBox.disabled = true;
     }
 
-    editBtn.addEventListener('click', enableEdit);
-    copyBtn.addEventListener('click', copyText);
-    saveBtn.addEventListener('click', saveClipon);
+    function copyClip() {
+      const text = document.getElementById('clipText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+      });
+    }
 
-    loadClipon();
+    // Load on page start
+    loadClip();
   </script>
+
 </body>
 </html>
