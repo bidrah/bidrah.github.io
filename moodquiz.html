@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Her Mood Decoder</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #e91e63;
+        }
+        .quiz-section, .upload-section {
+            margin-bottom: 30px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .options label {
+            display: block;
+            background-color: #fce4ec;
+            padding: 12px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            border: 1px solid #f8bbd0;
+        }
+        .options input[type="radio"], .options input[type="checkbox"] {
+            display: none;
+        }
+        .options input:checked + label {
+            background-color: #e91e63;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .btn {
+            display: inline-block;
+            background-color: #e91e63;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn:hover {
+            background-color: #c2185b;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f1f8e9;
+            border-radius: 5px;
+            border: 1px solid #dcedc8;
+        }
+        #results h3 {
+            color: #33691e;
+            margin-top: 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .upload-area {
+            border: 2px dashed #e91e63;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .upload-area p {
+            margin: 0;
+        }
+        #file-upload-label {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Her Mood Decoder Ring</h1>
+
+        <div id="quiz" class="quiz-section">
+            <h2>Take the Quiz</h2>
+            <form id="mood-quiz">
+                <div class="question">
+                    <p>1. How are you feeling right now?</p>
+                    <div class="options">
+                        <input type="radio" id="mood-fine" name="mood" value="fine"><label for="mood-fine">"I'm fine."</label>
+                        <input type="radio" id="mood-annoyed" name="mood" value="annoyed"><label for="mood-annoyed">A little annoyed</label>
+                        <input type="radio" id="mood-sad" name="mood" value="sad"><label for="mood-sad">Sad and weepy</label>
+                        <input type="radio" id="mood-angry" name="mood" value="angry"><label for="mood-angry">Genuinely angry</label>
+                        <input type="radio" id="mood-stressed" name="mood" value="stressed"><label for="mood-stressed">Stressed and overwhelmed</label>
+                        <input type="radio" id="mood-tired" name="mood" value="tired"><label for="mood-tired">Just tired</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p>2. What's bothering you? (Select all that apply)</p>
+                    <div class="options">
+                        <input type="checkbox" id="upset-work" name="upset" value="work"><label for="upset-work">Work/Stress</label>
+                        <input type="checkbox" id="upset-you" name="upset" value="you"><label for="upset-you">Something you did (or didn't do)</label>
+                        <input type="checkbox" id="upset-chores" name="upset" value="chores"><label for="upset-chores">Household chores</label>
+                        <input type="checkbox" id="upset-plans" name="upset" value="plans"><label for="upset-plans">Our plans</label>
+                        <input type="checkbox" id="upset-listening" name="upset" value="listening"><label for="upset-listening">I feel like you're not listening</label>
+                        <input type="checkbox" id="upset-nothing" name="upset" value="nothing"><label for="upset-nothing">"Nothing."</label>
+                        <input type="checkbox" id="upset-dont-know" name="upset" value="dont-know"><label for="upset-dont-know">I don't even know</label>
+                    </div>
+                </div>
+
+                <button type="button" class="btn" onclick="generateReport()">Generate Encrypted Report</button>
+            </form>
+        </div>
+
+        <div class="upload-section">
+            <h2>Partner's Section: Decode Report</h2>
+            <div class="upload-area" id="drop-zone">
+                <input type="file" id="file-upload" class="hidden">
+                <label for="file-upload" id="file-upload-label">
+                    <p>Click here or drag & drop the report file to decode.</p>
+                </label>
+            </div>
+            <div id="results" class="hidden">
+                <h3>Here's the situation and a possible fix:</h3>
+                <div id="decoded-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const encryptionKey = "ThisIsASecretKeyForOurLove";
+
+        // Simple XOR encryption/decryption
+        function crypt(str, key) {
+            let result = '';
+            for (let i = 0; i < str.length; i++) {
+                result += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+            }
+            return result;
+        }
+
+        function generateReport() {
+            const mood = document.querySelector('input[name="mood"]:checked');
+            const upsetReasons = Array.from(document.querySelectorAll('input[name="upset"]:checked')).map(el => el.value);
+
+            if (!mood) {
+                alert("Please select a mood first.");
+                return;
+            }
+
+            const reportData = {
+                mood: mood.value,
+                upset: upsetReasons,
+                timestamp: new Date().toISOString()
+            };
+
+            const reportString = JSON.stringify(reportData);
+            const encryptedReport = btoa(crypt(reportString, encryptionKey)); // Base64 encode for file safety
+
+            const blob = new Blob([encryptedReport], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'mood_report.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert("Encrypted report downloaded! Give this file to your partner to decode on this same page.");
+        }
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileUpload = document.getElementById('file-upload');
+        const resultsDiv = document.getElementById('results');
+        const decodedContentDiv = document.getElementById('decoded-content');
+
+        dropZone.addEventListener('click', () => fileUpload.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '#fce4ec';
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.backgroundColor = 'transparent';
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = 'transparent';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+        fileUpload.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const encryptedContent = event.target.result;
+                    const decryptedString = crypt(atob(encryptedContent), encryptionKey); // Decode Base64 first
+                    const reportData = JSON.parse(decryptedString);
+                    displayDecodedReport(reportData);
+                } catch (e) {
+                    alert("This doesn't seem to be a valid report file, or it's corrupted. Please try again.");
+                    console.error("Decryption/Parsing Error:", e);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function displayDecodedReport(data) {
+            const { mood, upset } = data;
+            let moodTranslation = '';
+            let fixItSolution = '<ul>';
+
+            // Mood Translation
+            switch (mood) {
+                case 'fine':
+                    moodTranslation = '<strong>Her Mood:</strong> "I\'m fine."<br><strong>Translation:</strong> She is likely not fine. Proceed with caution. Something is definitely up.';
+                    break;
+                case 'annoyed':
+                    moodTranslation = '<strong>Her Mood:</strong> Annoyed.<br><strong>Translation:</strong> Something specific and recent has irritated her. It might be small, but it\'s bothering her.';
+                    break;
+                case 'sad':
+                    moodTranslation = '<strong>Her Mood:</strong> Sad & Weepy.<br><strong>Translation:</strong> She feels hurt or overwhelmed. This requires gentleness and support, not immediate solutions.';
+                    break;
+                case 'angry':
+                    moodTranslation = '<strong>Her Mood:</strong> Angry.<br><strong>Translation:</strong> A boundary has been crossed or she feels genuinely wronged. Give her space if she asks, but be ready to listen.';
+                    break;
+                case 'stressed':
+                    moodTranslation = '<strong>Her Mood:</strong> Stressed & Overwhelmed.<br><strong>Translation:</strong> Her plate is too full and she\'s struggling to cope. She needs a partner, not another problem.';
+                    break;
+                case 'tired':
+                    moodTranslation = '<strong>Her Mood:</strong> Tired.<br><strong>Translation:</strong> This might actually just mean she\'s physically or mentally exhausted. Don\'t assume it\'s about you, but helping her rest is a good move.';
+                    break;
+            }
+
+            // Fix-it Solutions based on Upset reasons
+            if (upset.length === 0) {
+                fixItSolution += '<li>She didn\'t specify what was wrong, but given her mood, the best first step is to create a calm, supportive environment.</li>';
+            }
+
+            if (upset.includes('nothing') || upset.includes('dont-know')) {
+                fixItSolution += '<li>She said "Nothing" or "I don\'t know". This often means "I\'m too tired/upset/overwhelmed to explain it right now". Don\'t press for details immediately.</li>';
+            }
+            if (upset.includes('you')) {
+                fixItSolution += '<li><strong>Action:</strong> Gently ask, "I get the feeling I might have done something to upset you. Can we talk about it when you\'re ready? I want to understand." Do NOT get defensive.</li>';
+            }
+            if (upset.includes('work')) {
+                fixItSolution += '<li><strong>Action:</strong> Say, "It sounds like work was really tough. I\'m here to listen if you want to vent. You don\'t have to solve anything, just talk." Offer to take something off her plate, like making dinner.</li>';
+            }
+            if (upset.includes('chores')) {
+                fixItSolution += '<li><strong>Action:</strong> Do a chore. Don\'t ask which one. Pick one and do it. Unload the dishwasher, do the laundry, tidy up the living room. Actions speak louder than words here.</li>';
+            }
+             if (upset.includes('plans')) {
+                fixItSolution += '<li><strong>Action:</strong> Reassure her about your plans. Say, "I\'m really looking forward to [the plan]. If you\'re feeling off about it, can we chat and make sure it\'s something we both want to do?"</li>';
+            }
+            if (upset.includes('listening')) {
+                fixItSolution += '<li><strong>Action:</strong> Put your phone down. Turn off the TV. Make eye contact. Say, "I\'m sorry if I made you feel like I wasn\'t listening. You have my full attention now." And then actually listen.</li>';
+            }
+
+            // General advice based on mood
+            if (mood === 'sad') {
+                fixItSolution += '<li><strong>General Advice:</strong> A hug is almost always a good idea. Ask "Do you want to talk about it, or would you prefer a distraction like watching a movie together?" Offer physical comfort.</li>';
+            } else if (mood === 'angry') {
+                 fixItSolution += '<li><strong>General Advice:</strong> Validate her feelings. "I can see you\'re angry, and you have a right to be." Understanding must come before solving.</li>';
+            } else if (mood === 'stressed') {
+                 fixItSolution += '<li><strong>General Advice:</strong> Ask "What can I take off your plate right now?" This is the most direct and helpful question you can ask.</li>';
+            } else if (mood === 'tired' && upset.length === 0){
+                 fixItSolution += '<li><strong>General Advice:</strong> Let her rest. Make her a cup of tea, run her a bath, or just handle things so she can have some quiet time.</li>'
+            }
+
+
+            fixItSolution += '</ul>';
+
+            decodedContentDiv.innerHTML = `<p>${moodTranslation}</p><h4>Action Plan:</h4>${fixItSolution}`;
+            resultsDiv.classList.remove('hidden');
+        }
+
+    </script>
+
+</body>
+</html>
