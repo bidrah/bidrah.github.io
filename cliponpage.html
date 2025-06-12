@@ -1,104 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>ClipOn Cloud Saver</title>
+  <title>Clipon Value Viewer</title>
   <style>
     body {
       font-family: sans-serif;
-      background: #eef6f7;
-      padding: 2rem;
-      max-width: 600px;
-      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #f0f4f8;
     }
-    textarea {
-      width: 100%;
-      height: 100px;
-      font-size: 1rem;
-      padding: 0.5rem;
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      text-align: center;
+    }
+    #cliponValue {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      word-break: break-word;
     }
     button {
-      margin-top: 1rem;
-      padding: 0.6rem 1rem;
-      font-size: 1rem;
-    }
-    #savedSection {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: white;
-      border: 1px solid #ccc;
-      position: relative;
-    }
-    #copyBtn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: #007BFF;
+      padding: 10px 20px;
+      background-color: #008080;
       color: white;
       border: none;
-      padding: 0.4rem 0.7rem;
       border-radius: 5px;
       cursor: pointer;
+    }
+    button:active {
+      background-color: #006666;
     }
   </style>
 </head>
 <body>
-
-  <h2>Save to ClipOn (Google Sheet)</h2>
-
-  <textarea id="clipInput" placeholder="Enter your text..."></textarea>
-  <br>
-  <button onclick="saveToSheet()">Save</button>
-
-  <div id="savedSection" style="display:none;">
-    <button id="copyBtn" onclick="copyClip()">Copy</button>
-    <strong>Latest Clip:</strong>
-    <p id="clipText">Loading...</p>
+  <div class="container">
+    <h2>Clipon Value</h2>
+    <div id="cliponValue">Loading...</div>
+    <button onclick="copyToClipboard()">Copy</button>
   </div>
 
   <script>
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbz1naZENaigQRS__6Hjqj1X2VvB1ELTglgWrIoXRdrU2p5MTS4huQueH9JmdUJCcCbglQ/exec'; // <-- Paste your deployed web app URL here
+    const endpoint = "https://script.google.com/macros/s/AKfycbzCHeqkMx3RtDUs4PP0HcAeSOjOXTdrgFa7kc4imK_RqeWnD9-aWZsLVUkK1AbcKg4T/exec";
 
-    function saveToSheet() {
-      const clipText = document.getElementById('clipInput').value.trim();
-      if (!clipText) return;
-
-      fetch(SHEET_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ clipon: clipText })
+    fetch(endpoint)
+      .then(res => res.json())
+      .then(data => {
+        // Assuming it's an array of objects like [{clipon: "value"}]
+        let value = "";
+        if (Array.isArray(data)) {
+          const firstItem = data.find(row => row.clipon !== undefined);
+          value = firstItem ? firstItem.clipon : "Not found";
+        } else if (data.clipon) {
+          value = data.clipon;
+        }
+        document.getElementById("cliponValue").textContent = value;
       })
-      .then(res => res.text())
-      .then(msg => {
-        console.log("Server response:", msg);
-        document.getElementById('clipInput').value = "";
-        loadClip(); // refresh display
+      .catch(err => {
+        document.getElementById("cliponValue").textContent = "Error loading value.";
+        console.error(err);
       });
-    }
 
-    function loadClip() {
-      fetch(SHEET_URL)
-        .then(res => res.json())
-        .then(data => {
-          if (data.clipon) {
-            document.getElementById('clipText').innerText = data.clipon;
-            document.getElementById('savedSection').style.display = 'block';
-          }
-        });
-    }
-
-    function copyClip() {
-      const text = document.getElementById('clipText').innerText;
+    function copyToClipboard() {
+      const text = document.getElementById("cliponValue").textContent;
       navigator.clipboard.writeText(text).then(() => {
         alert("Copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy.");
+        console.error(err);
       });
     }
-
-    // Load on page start
-    loadClip();
   </script>
-
 </body>
 </html>
