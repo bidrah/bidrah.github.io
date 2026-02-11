@@ -109,11 +109,24 @@
       margin-top: 12px;
     }
 
+    .extra-section {
+      margin-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 14px;
+    }
+
     .var-card {
       border-radius: 12px;
       background: #111d33;
       border: 1px solid rgba(255,255,255,0.08);
       padding: 10px;
+    }
+
+    .var-title {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #b8c6e5;
+      letter-spacing: 0.04em;
     }
 
     .shift-pill {
@@ -146,6 +159,10 @@
     <section class="panel">
       <div class="hero" id="hero"></div>
       <div class="grid" id="variables"></div>
+      <div class="extra-section">
+        <h2 class="var-title">Fetched JSON entries</h2>
+        <div class="grid" id="jsonEntries"></div>
+      </div>
     </section>
   </main>
 
@@ -164,7 +181,10 @@
 
     const hero = document.getElementById("hero");
     const variables = document.getElementById("variables");
+    const jsonEntries = document.getElementById("jsonEntries");
     const statusEl = document.getElementById("status");
+
+    const CORE_KEYS = new Set(["Day1", "Day2", "Dayu", "wd", "Sch4u", "Mcount", "Ecount", "Ncount"]);
 
     function showStatus(message, type = "ok") {
       statusEl.className = `status ${type}`;
@@ -227,6 +247,17 @@
         .map(([key, value]) => `
           <article class="var-card">
             <div class="label">${key}</div>
+            <div class="value">${asString(value)}</div>
+          </article>
+        `)
+        .join("");
+
+      const titleEntries = Object.entries(data).filter(([key]) => !CORE_KEYS.has(key));
+
+      jsonEntries.innerHTML = (titleEntries.length ? titleEntries : Object.entries(data))
+        .map(([key, value]) => `
+          <article class="var-card">
+            <div class="label">[${key}]</div>
             <div class="value">${asString(value)}</div>
           </article>
         `)
