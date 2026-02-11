@@ -1,298 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roster Dashboard</title>
-  <style>
-    :root {
-      --bg: #0b1220;
-      --panel: #121a2b;
-      --panel-2: #1b2438;
-      --text: #e8edf7;
-      --muted: #98a3b8;
-      --accent: #5ba8ff;
-      --danger: #ff6b6b;
-      --ok: #3ddc97;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(circle at top, #17223a 0%, var(--bg) 45%);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 24px;
-    }
+<title>Dynamic Widget</title>
 
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      gap: 16px;
-    }
+<style>
+body{
+margin:0;
+background:#222;
+display:flex;
+justify-content:center;
+padding:40px;
+font-family:Arial;
+}
 
-    .panel {
-      background: rgba(18, 26, 43, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 16px;
-      backdrop-filter: blur(5px);
-    }
+#widget{
+background:#ddd;
+border-radius:30px;
+padding:12px;
+display:flex;
+gap:10px;
+align-items:center;
+box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
 
-    h1 { margin: 0 0 8px; font-size: 1.5rem; }
-    .sub { color: var(--muted); margin: 0; }
+/* LEFT BIG TILE */
 
-    .controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.tile-big{
+width:110px;
+height:110px;
+background:#0ab48f;
+border-radius:25px;
+color:#00463a;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
 
-    input, textarea, button {
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: var(--panel-2);
-      color: var(--text);
-      padding: 10px 12px;
-      font-size: 0.95rem;
-    }
+.tile-big .main{
+font-size:48px;
+font-weight:bold;
+}
 
-    input { flex: 1 1 530px; }
-    button {
-      cursor: pointer;
-      background: linear-gradient(135deg, #2763dd, var(--accent));
-      border: none;
-      font-weight: 600;
-    }
+.tile-big .sub{
+font-size:14px;
+margin-top:5px;
+}
 
-    textarea {
-      width: 100%;
-      min-height: 120px;
-      resize: vertical;
-      margin-top: 10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
+/* CENTER TILE */
 
-    .status {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-weight: 600;
-      display: none;
-    }
-    .status.ok { display: block; background: rgba(61, 220, 151, 0.16); color: #89f8c2; }
-    .status.warn { display: block; background: rgba(255, 107, 107, 0.16); color: #ffafaf; }
+.tile-mid{
+width:90px;
+height:110px;
+background:#0bc7d4;
+border-radius:25px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+cursor:pointer;
+}
 
-    .hero {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-    }
+.tile-mid .day{
+font-size:40px;
+font-weight:bold;
+}
 
-    .metric {
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: #0e172b;
-      padding: 12px;
-    }
+.tile-mid .label{
+font-size:14px;
+}
 
-    .label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
-    .value { margin-top: 5px; font-size: 1.3rem; font-weight: 700; word-break: break-word; }
+/* RIGHT VALUES */
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
+.values{
+display:flex;
+gap:25px;
+padding:0 20px;
+}
 
-    .extra-section {
-      margin-top: 18px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding-top: 14px;
-    }
+.value{
+font-size:22px;
+font-weight:bold;
+color:#055;
+cursor:pointer;
+}
 
-    .var-card {
-      border-radius: 12px;
-      background: #111d33;
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 10px;
-    }
-
-    .var-title {
-      margin: 0;
-      font-size: 0.95rem;
-      color: #b8c6e5;
-      letter-spacing: 0.04em;
-    }
-
-    .shift-pill {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-weight: 700;
-      margin-top: 8px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: #2a354c;
-    }
-  </style>
+.value small{
+display:block;
+font-size:12px;
+text-align:center;
+}
+</style>
 </head>
+
 <body>
-  <main class="wrap">
-    <section class="panel">
-      <h1>Download Roster Dashboard</h1>
-      <p class="sub">Web version of your Tasker flow: fetch JSON, derive shift colour, compare roster WD, and display all variables.</p>
-    </section>
 
-    <section class="panel">
-      <div class="controls">
-        <input id="sourceUrl" type="url" value="https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLgY3c8ynALgr56RY9V-kAczBvh439kg1WxPY28LiO_SwutGFnyXivEN7a_mD7bojkrTA8SuXpIZdcVK4Yr_f2o1aWMxsjg6V4BtMixKT7QM5Go2SNHtBvvr_YvP_httc8LNXmZFCvsvZh9_eJLsUBOescUZThISXTVAa3M5pzaBZSavAxkWtEPT_tmoFTleQbbnxXSN7zgPybg8pBhKSpbMlFnhfezVfo-mBebrCx6a_mvCfXkq6SB2KZm_NllcLAB4B9qOt_tnQl6xaRWdx2HIZTMFcQ&lib=Mzn7XIXy_o6mREPeXKug9q0EgAwng8dN7" />
-        <button id="fetchBtn">Fetch Roster</button>
-      </div>
-      <textarea id="jsonFallback" placeholder="Optional: paste JSON here if the URL is blocked by CORS, then click Fetch Roster."></textarea>
-      <div id="status" class="status"></div>
-    </section>
+<div id="widget">
 
-    <section class="panel">
-      <div class="hero" id="hero"></div>
-      <div class="grid" id="variables"></div>
-      <div class="extra-section">
-        <h2 class="var-title">Fetched JSON entries</h2>
-        <div class="grid" id="jsonEntries"></div>
-      </div>
-    </section>
-  </main>
+<div class="tile-big" id="tileMain">
+<div class="main" id="mainValue">M³</div>
+<div class="sub" id="dateValue">WED 12:10</div>
+</div>
 
-  <script>
-    const COLOUR_RULES = [
-      { codes: ["G"], colour: "#FFC3BA21" },
-      { codes: ["M", "M1", "M2"], colour: "#FF00B292" },
-      { codes: ["N", "N1", "N2"], colour: "#FF0096C5" },
-      { codes: ["E", "E1", "E2"], colour: "#FFE68E1C" },
-      { codes: ["R", "WR"], colour: "#FFE43200" },
-      { codes: ["EL", "CL"], colour: "#E5B435FF" }
-    ];
+<div class="tile-mid" id="tileDay">
+<div class="day" id="dayValue">N</div>
+<div class="label" id="dayLabel">THU</div>
+</div>
 
-    const DEFAULT_COLOUR = "#2a354c";
-    const LOCAL_PREVIOUS_WD = "Rosterwd";
+<div class="values">
+<div class="value" id="v1">(3+4)<small>A</small></div>
+<div class="value" id="v2">(3+3)<small>B</small></div>
+<div class="value" id="v3">(3+9)<small>C</small></div>
+</div>
 
-    const hero = document.getElementById("hero");
-    const variables = document.getElementById("variables");
-    const jsonEntries = document.getElementById("jsonEntries");
-    const statusEl = document.getElementById("status");
+</div>
 
-    const CORE_KEYS = new Set(["Day1", "Day2", "Dayu", "wd", "Sch4u", "Mcount", "Ecount", "Ncount"]);
+<script>
 
-    function showStatus(message, type = "ok") {
-      statusEl.className = `status ${type}`;
-      statusEl.textContent = message;
-    }
+/* Example JSON source */
+const data = {
+ main:"M³",
+ date:"WED 12:10",
+ day:"N",
+ dayLabel:"THU",
+ values:[
+   {id:"v1",text:"(3+4)"},
+   {id:"v2",text:"(3+3)"},
+   {id:"v3",text:"(3+9)"}
+ ]
+};
 
-    function deriveColour(shiftCode = "") {
-      const normalized = String(shiftCode).trim();
-      const match = COLOUR_RULES.find(rule => rule.codes.includes(normalized));
-      return match ? match.colour : DEFAULT_COLOUR;
-    }
+/* Bind JSON → UI */
 
-    function asString(value) {
-      return value === undefined || value === null || value === "" ? "—" : String(value);
-    }
+mainValue.innerText = data.main;
+dateValue.innerText = data.date;
+dayValue.innerText = data.day;
+dayLabel.innerText = data.dayLabel;
 
-    function renderDashboard(data) {
-      const day1 = asString(data.Day1);
-      const day2 = asString(data.Day2);
-      const dayu = asString(data.Dayu);
-      const wd = asString(data.wd);
-      const previousWd = localStorage.getItem(LOCAL_PREVIOUS_WD) || "—";
-      const colourshift = deriveColour(day1);
-      const now = new Date();
-      const lastupdated = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+data.values.forEach(v=>{
+ document.getElementById(v.id).firstChild.nodeValue = v.text;
+});
 
-      const changed = previousWd !== "—" && wd !== "—" && previousWd !== wd;
-      localStorage.setItem(LOCAL_PREVIOUS_WD, wd);
+/* Click handlers */
 
-      hero.innerHTML = `
-        <article class="metric">
-          <div class="label">todayshift (Day1)</div>
-          <div class="value">${day1}</div>
-          <span class="shift-pill" style="background:${colourshift}">Colourshift: ${colourshift}</span>
-        </article>
-        <article class="metric"><div class="label">tomorrowshift (Day2)</div><div class="value">${day2}</div></article>
-        <article class="metric"><div class="label">upcoming (Dayu)</div><div class="value">${dayu}</div></article>
-        <article class="metric"><div class="label">lastupdated</div><div class="value">${lastupdated}</div></article>
-      `;
+tileMain.onclick = ()=>alert("Main clicked");
+tileDay.onclick = ()=>alert("Day clicked");
 
-      const dashboardVars = {
-        Rosterwd_old: previousWd,
-        wd,
-        Rosterwd_new: wd,
-        Sch4u: asString(data.Sch4u),
-        Mcount: asString(data.Mcount),
-        Ecount: asString(data.Ecount),
-        Ncount: asString(data.Ncount),
-        Day1: day1,
-        Day2: day2,
-        Dayu: dayu,
-        Colourshift: colourshift,
-        todayshift: day1,
-        tomorrowshift: day2,
-        upcoming: dayu,
-        lastupdated
-      };
+data.values.forEach(v=>{
+ document.getElementById(v.id).onclick = ()=>alert(v.text);
+});
 
-      variables.innerHTML = Object.entries(dashboardVars)
-        .map(([key, value]) => `
-          <article class="var-card">
-            <div class="label">${key}</div>
-            <div class="value">${asString(value)}</div>
-          </article>
-        `)
-        .join("");
+</script>
 
-      const titleEntries = Object.entries(data).filter(([key]) => !CORE_KEYS.has(key));
-
-      jsonEntries.innerHTML = (titleEntries.length ? titleEntries : Object.entries(data))
-        .map(([key, value]) => `
-          <article class="var-card">
-            <div class="label">[${key}]</div>
-            <div class="value">${asString(value)}</div>
-          </article>
-        `)
-        .join("");
-
-      if (changed) {
-        showStatus(`There is a change in your Roster • New: ${wd} • Old: ${previousWd}`, "warn");
-      } else {
-        showStatus("👍 done — roster data loaded", "ok");
-      }
-    }
-
-    async function loadRoster() {
-      const sourceUrl = document.getElementById("sourceUrl").value.trim();
-      const fallback = document.getElementById("jsonFallback").value.trim();
-
-      try {
-        let data;
-
-        if (fallback) {
-          data = JSON.parse(fallback);
-        } else {
-          const response = await fetch(sourceUrl, { cache: "no-store" });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          data = await response.json();
-        }
-
-        renderDashboard(data);
-      } catch (error) {
-        showStatus(`Failed to load roster: ${error.message}. Paste JSON in the fallback field and try again.`, "warn");
-      }
-    }
-
-    document.getElementById("fetchBtn").addEventListener("click", loadRoster);
-    window.addEventListener("DOMContentLoaded", loadRoster);
-  </script>
 </body>
 </html>
