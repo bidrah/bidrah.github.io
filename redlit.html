@@ -1,160 +1,382 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redlit Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111c33;
+      --panel-soft: #1a2642;
+      --text: #e6eefc;
+      --muted: #9bb0d2;
+      --accent: #5eead4;
+      --accent-strong: #14b8a6;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --shadow: 0 16px 30px rgba(2, 6, 23, 0.45);
+      --radius: 18px;
+    }
 
-<title>Dynamic Widget</title>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-body{
-margin:0;
-background:#222;
-display:flex;
-justify-content:center;
-padding:40px;
-font-family:Arial;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, #1e2b50 0%, transparent 45%),
+        radial-gradient(circle at 85% 100%, #183060 0%, transparent 45%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
 
-#widget{
-background:#ddd;
-border-radius:30px;
-padding:12px;
-display:flex;
-gap:10px;
-align-items:center;
-box-shadow:0 10px 30px rgba(0,0,0,.4);
-}
+    .dashboard {
+      width: min(980px, 100%);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 18px;
+    }
 
-/* LEFT BIG TILE */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
 
-.tile-big{
-width:110px;
-height:110px;
-background:#0ab48f;
-border-radius:25px;
-color:#00463a;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-}
+    .title-wrap h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 1rem + 1.2vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
 
-.tile-big .main{
-font-size:48px;
-font-weight:bold;
-}
+    .title-wrap p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
 
-.tile-big .sub{
-font-size:14px;
-margin-top:5px;
-}
+    .status-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      background: rgba(94, 234, 212, 0.14);
+      border: 1px solid rgba(94, 234, 212, 0.35);
+      color: var(--accent);
+      white-space: nowrap;
+    }
 
-/* CENTER TILE */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
 
-.tile-mid{
-width:90px;
-height:110px;
-background:#0bc7d4;
-border-radius:25px;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-cursor:pointer;
-}
+    .card {
+      background: linear-gradient(165deg, rgba(30, 41, 59, 0.82), rgba(17, 24, 39, 0.82));
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius);
+      padding: 16px;
+      min-height: 120px;
+    }
 
-.tile-mid .day{
-font-size:40px;
-font-weight:bold;
-}
+    .card.main {
+      grid-column: span 4;
+      display: grid;
+      align-content: center;
+      gap: 8px;
+    }
 
-.tile-mid .label{
-font-size:14px;
-}
+    .card.main .value {
+      font-size: clamp(2rem, 1.2rem + 1.8vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+    }
 
-/* RIGHT VALUES */
+    .card.main .sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
 
-.values{
-display:flex;
-gap:25px;
-padding:0 20px;
-}
+    .card.day {
+      grid-column: span 3;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      gap: 6px;
+    }
 
-.value{
-font-size:22px;
-font-weight:bold;
-color:#055;
-cursor:pointer;
-}
+    .card.day .big {
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #c4b5fd;
+    }
 
-.value small{
-display:block;
-font-size:12px;
-text-align:center;
-}
-</style>
+    .card.day .label {
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    .card.stats {
+      grid-column: span 5;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-items: center;
+    }
+
+    .mini {
+      background: var(--panel-soft);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 14px;
+      padding: 10px;
+      min-height: 82px;
+      display: grid;
+      align-content: center;
+      gap: 6px;
+    }
+
+    .mini .k {
+      font-size: 0.76rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .mini .v {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #ecfeff;
+      word-break: break-word;
+    }
+
+    .table-wrap {
+      background: linear-gradient(165deg, rgba(30, 41, 59, 0.72), rgba(17, 24, 39, 0.72));
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius);
+      padding: 10px;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 480px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-size: 0.76rem;
+    }
+
+    td {
+      color: #e2e8f0;
+    }
+
+    .warn {
+      color: var(--warn);
+    }
+
+    .error {
+      color: var(--danger);
+    }
+
+    @media (max-width: 800px) {
+      .card.main,
+      .card.day,
+      .card.stats {
+        grid-column: span 12;
+      }
+
+      .card.stats {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+
+      table {
+        min-width: 100%;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <main class="dashboard">
+    <section class="topbar">
+      <div class="title-wrap">
+        <h1>Live Data Dashboard</h1>
+        <p id="updatedAt">Loading latest readings…</p>
+      </div>
+      <div class="status-pill" id="statusPill">Connecting…</div>
+    </section>
 
-<div id="widget">
+    <section class="grid">
+      <article class="card main">
+        <div class="k">Main</div>
+        <div class="value" id="mainValue">--</div>
+        <div class="sub" id="dateValue">Waiting for data</div>
+      </article>
 
-<div class="tile-big" id="tileMain">
-<div class="main" id="mainValue">M³</div>
-<div class="sub" id="dateValue">WED 12:10</div>
-</div>
+      <article class="card day">
+        <div class="big" id="dayValue">--</div>
+        <div class="label" id="dayLabel">Day</div>
+      </article>
 
-<div class="tile-mid" id="tileDay">
-<div class="day" id="dayValue">N</div>
-<div class="label" id="dayLabel">THU</div>
-</div>
+      <article class="card stats" id="stats"></article>
+    </section>
 
-<div class="values">
-<div class="value" id="v1">(3+4)<small>A</small></div>
-<div class="value" id="v2">(3+3)<small>B</small></div>
-<div class="value" id="v3">(3+9)<small>C</small></div>
-</div>
+    <section class="table-wrap" id="tableWrap"></section>
+  </main>
 
-</div>
+  <script>
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbwIwYc_Sg7_Uj-OCqpSIMuW4z5b1_PbV5iQZQesn3Zlh1B7Wi5oxodEf8pCdyQpxjQ2/exec";
 
-<script>
+    const state = {
+      updatedAt: document.getElementById("updatedAt"),
+      statusPill: document.getElementById("statusPill"),
+      mainValue: document.getElementById("mainValue"),
+      dateValue: document.getElementById("dateValue"),
+      dayValue: document.getElementById("dayValue"),
+      dayLabel: document.getElementById("dayLabel"),
+      stats: document.getElementById("stats"),
+      tableWrap: document.getElementById("tableWrap"),
+    };
 
-/* Example JSON source */
-const data = {
- main:"M³",
- date:"WED 12:10",
- day:"N",
- dayLabel:"THU",
- values:[
-   {id:"v1",text:"(3+4)"},
-   {id:"v2",text:"(3+3)"},
-   {id:"v3",text:"(3+9)"}
- ]
-};
+    function humanLabel(key) {
+      return key
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/[_-]+/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+    }
 
-/* Bind JSON → UI */
+    function toText(value) {
+      if (value === null || value === undefined) return "—";
+      if (typeof value === "object") return JSON.stringify(value);
+      return String(value);
+    }
 
-mainValue.innerText = data.main;
-dateValue.innerText = data.date;
-dayValue.innerText = data.day;
-dayLabel.innerText = data.dayLabel;
+    function deriveSummary(payload) {
+      const values = payload?.values;
+      const base = {
+        main: payload?.main ?? payload?.title ?? payload?.name ?? "N/A",
+        date: payload?.date ?? payload?.timestamp ?? payload?.updatedAt ?? "No timestamp",
+        day: payload?.day ?? payload?.status?.[0] ?? "--",
+        dayLabel: payload?.dayLabel ?? payload?.status ?? "overview",
+      };
 
-data.values.forEach(v=>{
- document.getElementById(v.id).firstChild.nodeValue = v.text;
-});
+      if (Array.isArray(values) && values.length) {
+        base.cards = values.map((item, index) => {
+          if (typeof item === "object" && item !== null) {
+            const k = item.label || item.id || item.key || `Value ${index + 1}`;
+            const v = item.text || item.value || item.val || Object.values(item)[0];
+            return { key: k, value: toText(v) };
+          }
+          return { key: `Value ${index + 1}`, value: toText(item) };
+        });
+      } else {
+        base.cards = Object.entries(payload || {})
+          .filter(([k, v]) => !Array.isArray(v) && typeof v !== "object")
+          .slice(0, 6)
+          .map(([key, value]) => ({ key: humanLabel(key), value: toText(value) }));
+      }
 
-/* Click handlers */
+      return base;
+    }
 
-tileMain.onclick = ()=>alert("Main clicked");
-tileDay.onclick = ()=>alert("Day clicked");
+    function renderCards(cards) {
+      state.stats.innerHTML = "";
+      const safeCards = cards.length ? cards.slice(0, 6) : [{ key: "Info", value: "No card data" }];
+      safeCards.forEach((card) => {
+        const mini = document.createElement("div");
+        mini.className = "mini";
+        mini.innerHTML = `<div class="k">${humanLabel(card.key)}</div><div class="v">${toText(card.value)}</div>`;
+        state.stats.appendChild(mini);
+      });
+    }
 
-data.values.forEach(v=>{
- document.getElementById(v.id).onclick = ()=>alert(v.text);
-});
+    function renderTable(payload) {
+      const rows = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.rows)
+          ? payload.rows
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : null;
 
-</script>
+      if (!rows || !rows.length || typeof rows[0] !== "object") {
+        state.tableWrap.innerHTML = `<p class="warn">No tabular rows available in the JSON response.</p>`;
+        return;
+      }
 
+      const columns = Object.keys(rows[0]);
+      const head = columns.map((c) => `<th>${humanLabel(c)}</th>`).join("");
+      const body = rows
+        .slice(0, 30)
+        .map((row) => `<tr>${columns.map((c) => `<td>${toText(row[c])}</td>`).join("")}</tr>`)
+        .join("");
+
+      state.tableWrap.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    async function loadData() {
+      state.statusPill.textContent = "Connecting…";
+      state.statusPill.classList.remove("error");
+
+      try {
+        const response = await fetch(ENDPOINT, { method: "GET", cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const summary = deriveSummary(payload);
+
+        state.mainValue.textContent = summary.main;
+        state.dateValue.textContent = toText(summary.date);
+        state.dayValue.textContent = toText(summary.day);
+        state.dayLabel.textContent = toText(summary.dayLabel);
+        state.updatedAt.textContent = `Updated ${new Date().toLocaleString()}`;
+        state.statusPill.textContent = "Live";
+
+        renderCards(summary.cards || []);
+        renderTable(payload);
+      } catch (error) {
+        console.error(error);
+        state.statusPill.textContent = "Unavailable";
+        state.statusPill.classList.add("error");
+        state.updatedAt.innerHTML = `<span class="error">Could not load data from endpoint.</span>`;
+        state.tableWrap.innerHTML = `<p class="error">${toText(error.message)}</p>`;
+        renderCards([]);
+      }
+    }
+
+    loadData();
+  </script>
 </body>
 </html>
