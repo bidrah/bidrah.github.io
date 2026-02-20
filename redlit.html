@@ -80,66 +80,103 @@
       white-space: nowrap;
     }
 
-    .grid {
+    .layout-showcase {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 24px;
+      padding: 14px;
       display: grid;
-      grid-template-columns: repeat(12, 1fr);
       gap: 14px;
     }
 
-    .card {
-      background: linear-gradient(165deg, rgba(30, 41, 59, 0.82), rgba(17, 24, 39, 0.82));
-      border: 1px solid rgba(148, 163, 184, 0.16);
-      border-radius: var(--radius);
-      padding: 16px;
-      min-height: 120px;
-    }
-
-    .card.main {
-      grid-column: span 4;
+    .header-row {
       display: grid;
-      align-content: center;
+      grid-template-columns: minmax(180px, 2fr) minmax(120px, 1.1fr) minmax(180px, 3fr);
       gap: 8px;
     }
 
-    .card.main .value {
-      font-size: clamp(2rem, 1.2rem + 1.8vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1;
-      color: var(--accent);
-    }
-
-    .card.main .sub {
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .card.day {
-      grid-column: span 3;
+    .panel {
+      border-radius: 20px;
+      padding: 10px 14px;
+      min-height: 135px;
       display: grid;
-      place-content: center;
-      text-align: center;
+      align-content: space-between;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      text-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
+    }
+
+    .panel.left {
+      background: linear-gradient(165deg, #16d4ba, #0ea5a5);
+      color: #073b44;
+    }
+
+    .panel.mid {
+      background: linear-gradient(165deg, #24b9e7, #06b6d4);
+      color: #083344;
+    }
+
+    .top-mark {
+      display: inline-flex;
+      align-items: flex-start;
       gap: 6px;
+      font-weight: 900;
+      line-height: 0.8;
+      letter-spacing: 0.06em;
     }
 
-    .card.day .big {
-      font-size: 2.3rem;
+    .top-mark .letter {
+      font-size: clamp(3rem, 2rem + 3vw, 5.2rem);
+    }
+
+    .top-mark sup {
+      font-size: clamp(0.8rem, 0.5rem + 0.6vw, 1.4rem);
       font-weight: 700;
-      color: #c4b5fd;
+      margin-top: 8px;
+      letter-spacing: 0;
     }
 
-    .card.day .label {
-      color: var(--muted);
+    .bottom-label {
+      font-size: clamp(1.2rem, 0.8rem + 1vw, 1.8rem);
+      font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      font-size: 0.8rem;
     }
 
-    .card.stats {
-      grid-column: span 5;
+    .link-letter {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+
+    .link-letter:hover,
+    .link-letter:focus-visible {
+      border-color: currentColor;
+    }
+
+    .word-panel {
+      border-radius: 20px;
+      padding: 10px 14px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .dayu {
+      margin: 0;
+      font-size: clamp(1.9rem, 1.2rem + 2vw, 3.4rem);
+      letter-spacing: 0.16em;
+      font-weight: 900;
+      color: #d5f7ff;
+      text-transform: uppercase;
+    }
+
+    .counts {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      align-items: center;
     }
 
     .mini {
@@ -210,14 +247,12 @@
     }
 
     @media (max-width: 800px) {
-      .card.main,
-      .card.day,
-      .card.stats {
-        grid-column: span 12;
+      .header-row {
+        grid-template-columns: 1fr;
       }
 
-      .card.stats {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      .counts {
+        grid-template-columns: 1fr;
       }
 
       table {
@@ -236,19 +271,24 @@
       <div class="status-pill" id="statusPill">Connecting…</div>
     </section>
 
-    <section class="grid">
-      <article class="card main">
-        <div class="k">Main</div>
-        <div class="value" id="mainValue">--</div>
-        <div class="sub" id="dateValue">Waiting for data</div>
-      </article>
+    <section class="layout-showcase">
+      <div class="header-row">
+        <article class="panel left">
+          <div class="top-mark"><span class="letter" id="mValue">M</span><sup id="mSup">--</sup></div>
+          <div class="bottom-label" id="mLabel">Day1</div>
+        </article>
 
-      <article class="card day">
-        <div class="big" id="dayValue">--</div>
-        <div class="label" id="dayLabel">Day</div>
-      </article>
+        <article class="panel mid">
+          <div class="top-mark"><a class="letter link-letter" id="nLink" href="#" title="Day2"><span id="nValue">N</span></a></div>
+          <div class="bottom-label" id="nLabel">Day2</div>
+        </article>
 
-      <article class="card stats" id="stats"></article>
+        <article class="word-panel">
+          <h2 class="dayu" id="dayuValue">DAYU</h2>
+        </article>
+      </div>
+
+      <div class="counts" id="stats"></div>
     </section>
 
     <section class="table-wrap" id="tableWrap"></section>
@@ -260,10 +300,13 @@
     const state = {
       updatedAt: document.getElementById("updatedAt"),
       statusPill: document.getElementById("statusPill"),
-      mainValue: document.getElementById("mainValue"),
-      dateValue: document.getElementById("dateValue"),
-      dayValue: document.getElementById("dayValue"),
-      dayLabel: document.getElementById("dayLabel"),
+      mValue: document.getElementById("mValue"),
+      mSup: document.getElementById("mSup"),
+      mLabel: document.getElementById("mLabel"),
+      nValue: document.getElementById("nValue"),
+      nLabel: document.getElementById("nLabel"),
+      nLink: document.getElementById("nLink"),
+      dayuValue: document.getElementById("dayuValue"),
       stats: document.getElementById("stats"),
       tableWrap: document.getElementById("tableWrap"),
     };
@@ -282,36 +325,30 @@
     }
 
     function deriveSummary(payload) {
-      const values = payload?.values;
-      const base = {
-        main: payload?.main ?? payload?.title ?? payload?.name ?? "N/A",
-        date: payload?.date ?? payload?.timestamp ?? payload?.updatedAt ?? "No timestamp",
-        day: payload?.day ?? payload?.status?.[0] ?? "--",
-        dayLabel: payload?.dayLabel ?? payload?.status ?? "overview",
+      const mCount = payload?.Mcount ?? payload?.mcount ?? payload?.mCount ?? "—";
+      const nCount = payload?.Ncount ?? payload?.ncount ?? payload?.nCount ?? "—";
+      const eCount = payload?.Ecount ?? payload?.ecount ?? payload?.eCount ?? "—";
+
+      return {
+        m: payload?.M ?? payload?.main ?? "M",
+        mSup: payload?.sch4u ?? payload?.sch ?? payload?.sup ?? "sch4u",
+        mLabel: payload?.Day1 ?? payload?.day1 ?? "Day1",
+        n: payload?.N ?? payload?.next ?? "N",
+        nLabel: payload?.Day2 ?? payload?.day2 ?? "Day2",
+        nHref: payload?.day2Link ?? payload?.Day2Link ?? "#",
+        dayu: payload?.Dayu ?? payload?.dayu ?? "Dayu",
+        updated: payload?.date ?? payload?.timestamp ?? payload?.updatedAt ?? "No timestamp",
+        cards: [
+          { key: "M", value: mCount },
+          { key: "N", value: nCount },
+          { key: "E", value: eCount },
+        ],
       };
-
-      if (Array.isArray(values) && values.length) {
-        base.cards = values.map((item, index) => {
-          if (typeof item === "object" && item !== null) {
-            const k = item.label || item.id || item.key || `Value ${index + 1}`;
-            const v = item.text || item.value || item.val || Object.values(item)[0];
-            return { key: k, value: toText(v) };
-          }
-          return { key: `Value ${index + 1}`, value: toText(item) };
-        });
-      } else {
-        base.cards = Object.entries(payload || {})
-          .filter(([k, v]) => !Array.isArray(v) && typeof v !== "object")
-          .slice(0, 6)
-          .map(([key, value]) => ({ key: humanLabel(key), value: toText(value) }));
-      }
-
-      return base;
     }
 
     function renderCards(cards) {
       state.stats.innerHTML = "";
-      const safeCards = cards.length ? cards.slice(0, 6) : [{ key: "Info", value: "No card data" }];
+      const safeCards = cards.length ? cards.slice(0, 3) : [{ key: "Info", value: "No count data" }];
       safeCards.forEach((card) => {
         const mini = document.createElement("div");
         mini.className = "mini";
@@ -357,11 +394,14 @@
         const payload = await response.json();
         const summary = deriveSummary(payload);
 
-        state.mainValue.textContent = summary.main;
-        state.dateValue.textContent = toText(summary.date);
-        state.dayValue.textContent = toText(summary.day);
-        state.dayLabel.textContent = toText(summary.dayLabel);
-        state.updatedAt.textContent = `Updated ${new Date().toLocaleString()}`;
+        state.mValue.textContent = toText(summary.m);
+        state.mSup.textContent = toText(summary.mSup);
+        state.mLabel.textContent = toText(summary.mLabel);
+        state.nValue.textContent = toText(summary.n);
+        state.nLabel.textContent = toText(summary.nLabel);
+        state.nLink.href = toText(summary.nHref) || "#";
+        state.dayuValue.textContent = toText(summary.dayu);
+        state.updatedAt.textContent = `Updated ${toText(summary.updated)}`;
         state.statusPill.textContent = "Live";
 
         renderCards(summary.cards || []);
