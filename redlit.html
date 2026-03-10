@@ -1,422 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Redlit Dashboard</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #111c33;
-      --panel-soft: #1a2642;
-      --text: #e6eefc;
-      --muted: #9bb0d2;
-      --accent: #5eead4;
-      --accent-strong: #14b8a6;
-      --warn: #fbbf24;
-      --danger: #fb7185;
-      --shadow: 0 16px 30px rgba(2, 6, 23, 0.45);
-      --radius: 18px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cell Voltage Logger</title>
 
-    * {
-      box-sizing: border-box;
-    }
+<style>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 20% 0%, #1e2b50 0%, transparent 45%),
-        radial-gradient(circle at 85% 100%, #183060 0%, transparent 45%),
-        var(--bg);
-      display: grid;
-      place-items: center;
-      padding: 28px;
-    }
+body{
+font-family:system-ui;
+background:#e8f3f1;
+margin:0;
+padding:8px;
+padding-bottom:10vh;
+transition:background .25s,color .25s;
+}
 
-    .dashboard {
-      width: min(980px, 100%);
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 26px;
-      padding: 24px;
-      box-shadow: var(--shadow);
-      display: grid;
-      gap: 18px;
-    }
+body.dark{
+background:#111;
+color:#eee;
+}
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
+.container{
+max-width:520px;
+margin:auto;
+}
 
-    .title-wrap h1 {
-      margin: 0;
-      font-size: clamp(1.4rem, 1rem + 1.2vw, 2rem);
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:14px;
+margin-bottom:6px;
+}
 
-    .title-wrap p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
+.toggle{
+cursor:pointer;
+}
 
-    .status-pill {
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      background: rgba(94, 234, 212, 0.14);
-      border: 1px solid rgba(94, 234, 212, 0.35);
-      color: var(--accent);
-      white-space: nowrap;
-    }
+.title{
+font-weight:600;
+}
 
-    .layout-showcase {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      border-radius: 24px;
-      padding: 14px;
-      display: grid;
-      gap: 14px;
-    }
+.mainBox{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:8px;
+margin-bottom:6px;
+}
 
-    .header-row {
-      display: grid;
-      grid-template-columns: minmax(180px, 2fr) minmax(120px, 1.1fr) minmax(180px, 3fr);
-      gap: 8px;
-    }
+.voltage{
+font-size:52px;
+font-weight:bold;
+border:3px solid #222;
+border-radius:14px;
+padding:10px;
+width:180px;
+text-align:center;
+background:white;
+}
 
-    .panel {
-      border-radius: 20px;
-      padding: 10px 14px;
-      min-height: 135px;
-      display: grid;
-      align-content: space-between;
-      border: 1px solid rgba(15, 23, 42, 0.12);
-      text-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
-    }
+body.dark .voltage{
+background:#222;
+border-color:#777;
+}
 
-    .panel.left {
-      background: linear-gradient(165deg, #16d4ba, #0ea5a5);
-      color: #073b44;
-    }
+.editBtn{
+font-size:14px;
+padding:8px 10px;
+border-radius:8px;
+border:none;
+background:#0b8f7a;
+color:white;
+}
 
-    .panel.mid {
-      background: linear-gradient(165deg, #24b9e7, #06b6d4);
-      color: #083344;
-    }
+.presets{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:6px;
+margin-bottom:8px;
+}
 
-    .top-mark {
-      display: inline-flex;
-      align-items: flex-start;
-      gap: 6px;
-      font-weight: 900;
-      line-height: 0.8;
-      letter-spacing: 0.06em;
-    }
+.presets button{
+padding:12px;
+font-size:18px;
+border-radius:8px;
+border:2px solid #333;
+background:white;
+}
 
-    .top-mark .letter {
-      font-size: clamp(3rem, 2rem + 3vw, 5.2rem);
-    }
+body.dark .presets button{
+background:#222;
+border-color:#666;
+color:white;
+}
 
-    .top-mark sup {
-      font-size: clamp(0.8rem, 0.5rem + 0.6vw, 1.4rem);
-      font-weight: 700;
-      margin-top: 8px;
-      letter-spacing: 0;
-    }
+.presets button.mean{
+background:#0b8f7a;
+color:white;
+}
 
-    .bottom-label {
-      font-size: clamp(1.2rem, 0.8rem + 1vw, 1.8rem);
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+.nav{
+display:flex;
+gap:6px;
+margin-bottom:8px;
+}
 
-    .link-letter {
-      color: inherit;
-      text-decoration: none;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s ease;
-    }
+.nav button{
+flex:1;
+padding:8px;
+font-size:14px;
+border-radius:8px;
+border:2px solid #333;
+background:white;
+}
 
-    .link-letter:hover,
-    .link-letter:focus-visible {
-      border-color: currentColor;
-    }
+body.dark .nav button{
+background:#222;
+border-color:#666;
+color:white;
+}
 
-    .word-panel {
-      border-radius: 20px;
-      padding: 10px 14px;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      background: rgba(15, 23, 42, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-    }
+.listContainer{
+height:300px;
+overflow-y:auto;
+border:2px solid #333;
+border-radius:8px;
+background:white;
+}
 
-    .dayu {
-      margin: 0;
-      font-size: clamp(1.9rem, 1.2rem + 2vw, 3.4rem);
-      letter-spacing: 0.16em;
-      font-weight: 900;
-      color: #d5f7ff;
-      text-transform: uppercase;
-    }
+body.dark .listContainer{
+background:#1a1a1a;
+border-color:#666;
+}
 
-    .counts {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
+table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
 
-    .mini {
-      background: var(--panel-soft);
-      border: 1px solid rgba(148, 163, 184, 0.15);
-      border-radius: 14px;
-      padding: 10px;
-      min-height: 82px;
-      display: grid;
-      align-content: center;
-      gap: 6px;
-    }
+td,th{
+border:1px solid #aaa;
+padding:4px;
+text-align:center;
+}
 
-    .mini .k {
-      font-size: 0.76rem;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
+body.dark td, body.dark th{
+border-color:#555;
+}
 
-    .mini .v {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: #ecfeff;
-      word-break: break-word;
-    }
+.abnormal{
+background:#ffe1b3;
+}
 
-    .table-wrap {
-      background: linear-gradient(165deg, rgba(30, 41, 59, 0.72), rgba(17, 24, 39, 0.72));
-      border: 1px solid rgba(148, 163, 184, 0.16);
-      border-radius: var(--radius);
-      padding: 10px;
-      overflow: auto;
-    }
+body.dark .abnormal{
+background:#664400;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 480px;
-    }
+.export{
+margin-top:6px;
+width:100%;
+padding:10px;
+font-size:15px;
+border:none;
+border-radius:8px;
+background:#0b8f7a;
+color:white;
+}
 
-    th,
-    td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-      font-size: 0.92rem;
-    }
-
-    th {
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      font-size: 0.76rem;
-    }
-
-    td {
-      color: #e2e8f0;
-    }
-
-    .warn {
-      color: var(--warn);
-    }
-
-    .error {
-      color: var(--danger);
-    }
-
-    @media (max-width: 800px) {
-      .header-row {
-        grid-template-columns: 1fr;
-      }
-
-      .counts {
-        grid-template-columns: 1fr;
-      }
-
-      table {
-        min-width: 100%;
-      }
-    }
-  </style>
+</style>
 </head>
+
 <body>
-  <main class="dashboard">
-    <section class="topbar">
-      <div class="title-wrap">
-        <h1>Live Data Dashboard</h1>
-        <p id="updatedAt">Loading latest readings…</p>
-      </div>
-      <div class="status-pill" id="statusPill">Connecting…</div>
-    </section>
 
-    <section class="layout-showcase">
-      <div class="header-row">
-        <article class="panel left">
-          <div class="top-mark"><span class="letter" id="mValue">M</span><sup id="mSup">--</sup></div>
-          <div class="bottom-label" id="mLabel">Day1</div>
-        </article>
+<div class="container">
 
-        <article class="panel mid">
-          <div class="top-mark"><a class="letter link-letter" id="nLink" href="#" title="Day2"><span id="nValue">N</span></a></div>
-          <div class="bottom-label" id="nLabel">Day2</div>
-        </article>
+<div class="topbar">
+<div class="toggle" onclick="toggleNight()">🌙</div>
+<div class="title" id="cellTitle">Cell 1</div>
+<div id="progress">1 / 85</div>
+</div>
 
-        <article class="word-panel">
-          <h2 class="dayu" id="dayuValue">DAYU</h2>
-        </article>
-      </div>
+<div class="mainBox">
+<div class="voltage" id="voltageDisplay">--</div>
+<button class="editBtn" onclick="editVoltage()">Edit</button>
+</div>
 
-      <div class="counts" id="stats"></div>
-    </section>
+<div class="presets" id="presetButtons"></div>
 
-    <section class="table-wrap" id="tableWrap"></section>
-  </main>
+<div class="nav">
+<button onclick="prevCell()">Previous</button>
+<button onclick="nextCell()">Next</button>
+</div>
 
-  <script>
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbwIwYc_Sg7_Uj-OCqpSIMuW4z5b1_PbV5iQZQesn3Zlh1B7Wi5oxodEf8pCdyQpxjQ2/exec";
+<div class="listContainer" id="listContainer">
+<table>
+<thead>
+<tr>
+<th>Cell</th>
+<th>Volt</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
 
-    const state = {
-      updatedAt: document.getElementById("updatedAt"),
-      statusPill: document.getElementById("statusPill"),
-      mValue: document.getElementById("mValue"),
-      mSup: document.getElementById("mSup"),
-      mLabel: document.getElementById("mLabel"),
-      nValue: document.getElementById("nValue"),
-      nLabel: document.getElementById("nLabel"),
-      nLink: document.getElementById("nLink"),
-      dayuValue: document.getElementById("dayuValue"),
-      stats: document.getElementById("stats"),
-      tableWrap: document.getElementById("tableWrap"),
-    };
+<button class="export" onclick="exportData()">Export</button>
 
-    function humanLabel(key) {
-      return key
-        .replace(/([a-z])([A-Z])/g, "$1 $2")
-        .replace(/[_-]+/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase());
-    }
+</div>
 
-    function toText(value) {
-      if (value === null || value === undefined) return "—";
-      if (typeof value === "object") return JSON.stringify(value);
-      return String(value);
-    }
+<script>
 
-    function deriveSummary(payload) {
-      const mCount = payload?.Mcount ?? payload?.mcount ?? payload?.mCount ?? "—";
-      const nCount = payload?.Ncount ?? payload?.ncount ?? payload?.nCount ?? "—";
-      const eCount = payload?.Ecount ?? payload?.ecount ?? payload?.eCount ?? "—";
+let currentCell=1
+let maxCells=85
+let voltages={}
+let meanVoltage=1.40
 
-      return {
-        m: payload?.M ?? payload?.main ?? "M",
-        mSup: payload?.sch4u ?? payload?.sch ?? payload?.sup ?? "sch4u",
-        mLabel: payload?.Day1 ?? payload?.day1 ?? "Day1",
-        n: payload?.N ?? payload?.next ?? "N",
-        nLabel: payload?.Day2 ?? payload?.day2 ?? "Day2",
-        nHref: payload?.day2Link ?? payload?.Day2Link ?? "#",
-        dayu: payload?.Dayu ?? payload?.dayu ?? "Dayu",
-        updated: payload?.date ?? payload?.timestamp ?? payload?.updatedAt ?? "No timestamp",
-        cards: [
-          { key: "M", value: mCount },
-          { key: "N", value: nCount },
-          { key: "E", value: eCount },
-        ],
-      };
-    }
+function askMean(){
+let mean=prompt("Enter mean voltage","1.40")
+if(mean) meanVoltage=parseFloat(mean)
+generateButtons()
+}
 
-    function renderCards(cards) {
-      state.stats.innerHTML = "";
-      const safeCards = cards.length ? cards.slice(0, 3) : [{ key: "Info", value: "No count data" }];
-      safeCards.forEach((card) => {
-        const mini = document.createElement("div");
-        mini.className = "mini";
-        mini.innerHTML = `<div class="k">${humanLabel(card.key)}</div><div class="v">${toText(card.value)}</div>`;
-        state.stats.appendChild(mini);
-      });
-    }
+function generateButtons(){
 
-    function renderTable(payload) {
-      const rows = Array.isArray(payload)
-        ? payload
-        : Array.isArray(payload?.rows)
-          ? payload.rows
-          : Array.isArray(payload?.data)
-            ? payload.data
-            : null;
+let container=document.getElementById("presetButtons")
+container.innerHTML=""
 
-      if (!rows || !rows.length || typeof rows[0] !== "object") {
-        state.tableWrap.innerHTML = `<p class="warn">No tabular rows available in the JSON response.</p>`;
-        return;
-      }
+let start = meanVoltage-0.04
 
-      const columns = Object.keys(rows[0]);
-      const head = columns.map((c) => `<th>${humanLabel(c)}</th>`).join("");
-      const body = rows
-        .slice(0, 30)
-        .map((row) => `<tr>${columns.map((c) => `<td>${toText(row[c])}</td>`).join("")}</tr>`)
-        .join("");
+for(let i=0;i<9;i++){
 
-      state.tableWrap.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
-    }
+let value=(start+(i*0.01)).toFixed(2)
 
-    async function loadData() {
-      state.statusPill.textContent = "Connecting…";
-      state.statusPill.classList.remove("error");
+let b=document.createElement("button")
+b.innerText=value
 
-      try {
-        const response = await fetch(ENDPOINT, { method: "GET", cache: "no-store" });
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
+if(i===4) b.classList.add("mean")
 
-        const payload = await response.json();
-        const summary = deriveSummary(payload);
+b.onclick=()=>setVoltage(value)
 
-        state.mValue.textContent = toText(summary.m);
-        state.mSup.textContent = toText(summary.mSup);
-        state.mLabel.textContent = toText(summary.mLabel);
-        state.nValue.textContent = toText(summary.n);
-        state.nLabel.textContent = toText(summary.nLabel);
-        state.nLink.href = toText(summary.nHref) || "#";
-        state.dayuValue.textContent = toText(summary.dayu);
-        state.updatedAt.textContent = `Updated ${toText(summary.updated)}`;
-        state.statusPill.textContent = "Live";
+container.appendChild(b)
 
-        renderCards(summary.cards || []);
-        renderTable(payload);
-      } catch (error) {
-        console.error(error);
-        state.statusPill.textContent = "Unavailable";
-        state.statusPill.classList.add("error");
-        state.updatedAt.innerHTML = `<span class="error">Could not load data from endpoint.</span>`;
-        state.tableWrap.innerHTML = `<p class="error">${toText(error.message)}</p>`;
-        renderCards([]);
-      }
-    }
+}
 
-    loadData();
-  </script>
+}
+
+function updateDisplay(){
+
+document.getElementById("cellTitle").innerText="Cell "+currentCell
+document.getElementById("progress").innerText=currentCell+" / "+maxCells
+
+document.getElementById("voltageDisplay").innerText=
+voltages[currentCell]||"--"
+
+updateTable()
+
+}
+
+function setVoltage(v){
+voltages[currentCell]=v
+nextCell()
+updateDisplay()
+}
+
+function editVoltage(){
+
+let current=voltages[currentCell]||""
+
+let v=prompt("Enter voltage",current)
+
+if(v){
+voltages[currentCell]=parseFloat(v).toFixed(2)
+updateDisplay()
+}
+
+}
+
+document.getElementById("voltageDisplay").onclick=editVoltage
+
+function nextCell(){
+if(currentCell<maxCells) currentCell++
+updateDisplay()
+}
+
+function prevCell(){
+if(currentCell>1) currentCell--
+updateDisplay()
+}
+
+function updateTable(){
+
+let tbody=document.getElementById("tableBody")
+tbody.innerHTML=""
+
+for(let i=1;i<=maxCells;i++){
+
+if(voltages[i]){
+
+let v=parseFloat(voltages[i])
+
+let row=document.createElement("tr")
+
+if(Math.abs(v-meanVoltage)>0.02)
+row.classList.add("abnormal")
+
+row.innerHTML=`<td>${i}</td><td>${voltages[i]}</td>`
+
+tbody.appendChild(row)
+
+}
+
+}
+
+autoScroll()
+
+}
+
+function autoScroll(){
+let container=document.getElementById("listContainer")
+container.scrollTop=container.scrollHeight
+}
+
+function exportData(){
+
+let text="Cell\tVoltage\n"
+
+for(let i=1;i<=maxCells;i++){
+
+if(voltages[i]){
+text+=i+"\t"+voltages[i]+"\n"
+}
+
+}
+
+let blob=new Blob([text],{type:"text/plain"})
+let a=document.createElement("a")
+a.href=URL.createObjectURL(blob)
+a.download="cell_voltages.txt"
+a.click()
+
+}
+
+function toggleNight(){
+document.body.classList.toggle("dark")
+}
+
+askMean()
+updateDisplay()
+
+</script>
+
 </body>
 </html>
