@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EJ Logger</title>
+
+<style>
+
+body{
+font-family:system-ui;
+background:#e8f3f1;
+margin:0;
+padding:12px;
+}
+
+.container{
+max-width:620px;
+margin:auto;
+}
+
+h2{
+text-align:center;
+margin-bottom:12px;
+}
+
+.setup input,
+.setup select{
+width:100%;
+margin-bottom:12px;
+padding:14px;
+font-size:18px;
+border-radius:8px;
+border:1px solid #bbb;
+box-sizing:border-box;
+}
+
+.startBtn{
+font-size:20px;
+padding:14px;
+width:100%;
+background:#0f766e;
+color:white;
+border:none;
+border-radius:10px;
+}
+
+.summary{
+font-size:14px;
+background:#fff;
+padding:10px;
+border-radius:8px;
+margin-bottom:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.editIcon{
+font-size:18px;
+cursor:pointer;
+}
+
+.idRow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:12px;
+align-items:center;
+}
+
+.idBox{
+display:flex;
+align-items:center;
+gap:4px;
+font-size:22px;
+font-weight:bold;
+}
+
+.idBox input{
+width:60px;
+padding:12px;
+font-size:22px;
+text-align:center;
+border-radius:8px;
+border:1px solid #bbb;
+}
+
+.addBtn{
+font-size:18px;
+padding:14px;
+border-radius:10px;
+border:none;
+background:#0f766e;
+color:white;
+margin-left:auto;
+}
+
+.row{
+display:flex;
+gap:8px;
+margin-bottom:12px;
+flex-wrap:wrap;
+}
+
+button{
+font-size:20px;
+padding:16px;
+border-radius:10px;
+border:none;
+background:#0f766e;
+color:white;
+flex:1;
+}
+
+.export{
+background:#2563eb;
+flex:0.5;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+}
+
+label{
+font-size:18px;
+display:block;
+margin-bottom:10px;
+}
+
+input[type="checkbox"]{
+transform:scale(1.4);
+margin-right:8px;
+}
+
+#remarks{
+width:100%;
+padding:14px;
+font-size:18px;
+border-radius:8px;
+border:1px solid #bbb;
+box-sizing:border-box;
+margin-bottom:12px;
+}
+
+.hint{
+font-size:13px;
+color:#555;
+margin-bottom:4px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+margin-top:12px;
+}
+
+td,th{
+border:1px solid #ccc;
+padding:6px;
+word-break:break-word;
+}
+
+.highlight{
+background:#ffe082;
+}
+
+.flash{
+animation:flashAnim 0.6s;
+}
+
+@keyframes flashAnim{
+0%{background:#b9f6ca}
+100%{background:transparent}
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SETUP -->
+
+<div id="setup" class="setup">
+
+<h2>Inspection Setup</h2>
+
+<select id="staff">
+<option>Faisal K K</option>
+<option>Sanoop A</option>
+<option>Sanuraj E K</option>
+<option>Sudheep K S</option>
+<option>Unais V M</option>
+<option>Vimal V J</option>
+<option selected>Abid Rahman M S</option>
+<option>Praveesh A P</option>
+<option>Arun B</option>
+<option>Shahadudeen K K</option>
+<option>Stalin C J</option>
+</select>
+
+<div class="hint">Select inspection date</div>
+<input type="date" id="date">
+
+<input list="sections" id="section" placeholder="TSM/TSD Section">
+
+<datalist id="sections">
+
+<script>
+
+for(let i=1;i<=54;i++){
+let n=String(i).padStart(2,"0")
+document.write(`<option value="TSM${n}">`)
+}
+
+for(let i=1;i<=81;i++){
+let n=String(i).padStart(2,"0")
+document.write(`<option value="TSD${n}">`)
+}
+
+</script>
+
+</datalist>
+
+<button class="startBtn" onclick="startInspection()">Start Inspection</button>
+
+</div>
+
+<!-- INSPECTION -->
+
+<div id="inspection" class="hidden">
+
+<div class="summary">
+
+<span id="summaryText"></span>
+
+<span class="editIcon" onclick="editSetup()">✏️</span>
+
+</div>
+
+<div class="idRow">
+
+<div class="idBox">
+<input id="ejA" placeholder="19">
+<span>/EJ-</span>
+<input id="ejB" placeholder="01">
+</div>
+
+<div class="idBox">
+<input id="locA" placeholder="19">
+<span>/</span>
+<input id="locB" placeholder="037">
+</div>
+
+<button class="addBtn" onclick="add()">Add Entry</button>
+
+</div>
+
+<div class="row">
+<button onclick="prev()">Prev</button>
+<button onclick="next()">Next</button>
+</div>
+
+<label>
+<input type="checkbox" id="grease"> Greasing done
+</label>
+
+<input id="remarks" placeholder="Remarks">
+
+<div class="row">
+<button class="export" onclick="exportCSV()">📋 Export CSV</button>
+</div>
+
+<table id="table">
+
+<tr>
+<th>Staff</th>
+<th>Date</th>
+<th>Section</th>
+<th>EJ</th>
+<th>Location</th>
+<th>Grease</th>
+<th>Remarks</th>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let data={}
+let rowMap={}
+let isExistingEntry=false
+
+function startInspection(){
+
+setup.classList.add("hidden")
+inspection.classList.remove("hidden")
+
+summaryText.innerText =
+staff.value+" | "+
+formatDate(date.value)+" | "+
+section.value
+
+}
+
+function editSetup(){
+
+inspection.classList.add("hidden")
+setup.classList.remove("hidden")
+
+}
+
+function getEJ(){
+return ejA.value+"/EJ-"+ejB.value
+}
+
+function next(){
+
+let v=Number(ejB.value||0)+2
+ejB.value=String(v).padStart(2,"0")
+
+loadEntry(getEJ())
+highlightCurrent()
+
+}
+
+function prev(){
+
+let v=Number(ejB.value||0)-2
+if(v<1)v=1
+
+ejB.value=String(v).padStart(2,"0")
+
+loadEntry(getEJ())
+highlightCurrent()
+
+}
+
+function loadEntry(ej){
+
+if(!data[ej]){
+
+isExistingEntry=false
+return
+
+}
+
+isExistingEntry=true
+
+let d=data[ej]
+
+let p=d.loc.split("/")
+
+locA.value=p[0]
+locB.value=p[1]
+
+grease.checked=(d.grease==="Greasing done")
+
+remarks.value=d.remarks
+
+}
+
+function formatDate(d){
+
+if(!d) return ""
+
+let p=d.split("-")
+
+return `${p[2]}/${p[1]}/${p[0]}`
+
+}
+
+function add(){
+
+let ej=getEJ()
+
+let rowData={
+staff:staff.value,
+date:formatDate(date.value),
+section:section.value,
+ej:ej,
+loc:locA.value+"/"+locB.value,
+grease:grease.checked?"Greasing done":"Greasing not done",
+remarks:remarks.value
+}
+
+data[ej]=rowData
+
+let table=document.getElementById("table")
+
+if(rowMap[ej]){
+
+let r=rowMap[ej]
+
+r.cells[0].innerText=rowData.staff
+r.cells[1].innerText=rowData.date
+r.cells[2].innerText=rowData.section
+r.cells[3].innerText=rowData.ej
+r.cells[4].innerText=rowData.loc
+r.cells[5].innerText=rowData.grease
+r.cells[6].innerText=rowData.remarks
+
+r.classList.add("flash")
+setTimeout(()=>r.classList.remove("flash"),600)
+
+}else{
+
+let r=table.insertRow()
+
+r.insertCell().innerText=rowData.staff
+r.insertCell().innerText=rowData.date
+r.insertCell().innerText=rowData.section
+r.insertCell().innerText=rowData.ej
+r.insertCell().innerText=rowData.loc
+r.insertCell().innerText=rowData.grease
+r.insertCell().innerText=rowData.remarks
+
+rowMap[ej]=r
+
+}
+
+highlightCurrent()
+
+}
+
+function highlightCurrent(){
+
+let ej=getEJ()
+
+document.querySelectorAll("tr").forEach(r=>r.classList.remove("highlight"))
+
+if(rowMap[ej]) rowMap[ej].classList.add("highlight")
+
+}
+
+function exportCSV(){
+
+let text=""
+
+Object.values(data).forEach(d=>{
+text+=`${d.staff}\t${d.date}\t${d.section}\t${d.ej}\t${d.loc}\t${d.grease}\t${d.remarks}\n`
+})
+
+let blob=new Blob([text])
+
+let a=document.createElement("a")
+
+a.href=URL.createObjectURL(blob)
+
+a.download="EJ_log.csv"
+
+a.click()
+
+}
+
+locB.addEventListener("focus",function(){
+
+if(!isExistingEntry){
+
+locB.value=""
+
+}
+
+})
+
+</script>
+
+</body>
+</html>
